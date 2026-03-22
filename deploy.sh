@@ -3,9 +3,10 @@
 # Usage: bash deploy.sh
 set -e
 
-DOMAIN="opaux.com"
-APP_DIR="/opt/opaux"
-REPO="https://github.com/faykgordon-sudo/opaux.git"
+# Allow overriding via env vars (e.g. export DOMAIN=opaux.com before running)
+DOMAIN="${DOMAIN:-opaux.com}"
+APP_DIR="${APP_DIR:-/opt/opaux}"
+REPO="https://github.com/faykgordon-sudo/Opaux.git"
 
 echo "=== Opaux Deploy Script ==="
 echo "Domain: $DOMAIN"
