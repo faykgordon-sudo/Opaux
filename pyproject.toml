@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "opaux"
-version = "0.1.0"
+version = "0.1.1"
 description = "Automated job application pipeline powered by Claude AI"
 readme = "README.md"
 license = { text = "MIT" }
@@ -64,7 +64,7 @@ pdf = [
 ]
 
 [project.scripts]
-opaux = "main:cli"
+opaux = "src.cli:cli"
 
 [project.urls]
 Homepage = "https://github.com/Gordon-Akaminko/opaux"
@@ -72,7 +72,7 @@ Issues = "https://github.com/Gordon-Akaminko/opaux/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["src*"]
+include = ["src*", "main*"]
 
 [tool.ruff]
 line-length = 100
