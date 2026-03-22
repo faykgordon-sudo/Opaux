@@ -10,9 +10,8 @@ services:
     restart: unless-stopped
 
   nginx:
-    image: nginx:alpine
+    build: ./nginx
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./data/certbot/www:/var/www/certbot:ro
       - ./data/certbot/conf:/etc/letsencrypt:ro
     ports:
