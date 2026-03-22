@@ -786,15 +786,8 @@ def build_europass(content: dict, format_config: dict) -> Any:
     personal = profile.get("personal", profile)
     tailored_bullets = content.get("tailored_bullets", {})
 
-    cefr_levels = extras.get("cefr_levels", ["A1", "A2", "B1", "B2", "C1", "C2"])
-    cefr_skills = extras.get("cefr_skills", [
+cefr_skills = extras.get("cefr_skills", [
         "Listening", "Reading", "Spoken interaction", "Spoken production", "Writing"])
-    digcomp_areas = extras.get("digcomp_areas", [
-        "Information and data literacy",
-        "Communication and collaboration",
-        "Digital content creation",
-        "Safety",
-        "Problem solving",
     ])
     digcomp_levels = extras.get("digcomp_levels", ["Foundation", "Intermediate", "Advanced", "Highly Specialised"])
 
@@ -858,12 +851,8 @@ def build_europass(content: dict, format_config: dict) -> Any:
             start = job.get("start", "")
             end = job.get("end", "Present")
 
-            _add_europass_label_value(
-                doc,
-                "Dates",
-                _format_date_range(start, end),
-                font, font_size,
-            )
+           employer_str = f"{company}, {location_str}" if location_str else company
+            _add_europass_label_value(doc, "Employer", employer_str, font, font_size)
             _add_europass_label_value(doc, "Occupation", title_str, font, font_size)
             _add_europass_label_value(doc, "Employer", f"{company}, {location_str}" if location_str else company, font, font_size)
 

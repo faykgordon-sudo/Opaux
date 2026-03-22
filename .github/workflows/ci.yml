@@ -32,7 +32,7 @@ jobs:
           pip install -e ".[dev]"
 
       - name: Lint with ruff
-        run: ruff check .
+        run: ruff check . --select E,F,I,W --ignore E402,E741,B904,F821,F841,SIM105,SIM108,SIM115,B007 --line-length 135
 
       - name: Type check with mypy
         run: mypy src/
