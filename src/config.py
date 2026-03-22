@@ -119,7 +119,7 @@ class ProfileConfig(BaseModel):
 # Validation helpers
 # ---------------------------------------------------------------------------
 
-def _fmt_errors(errors: list[dict]) -> str:
+def _fmt_errors(errors: list[Any]) -> str:
     lines = []
     for i, err in enumerate(errors, 1):
         loc = " -> ".join(str(p) for p in err["loc"])

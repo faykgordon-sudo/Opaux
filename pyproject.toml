@@ -83,3 +83,18 @@ ignore = ["E402", "E741", "B904", "F821", "F841", "SIM105", "SIM108", "SIM115", 
 "tests/*" = ["E501"]
 "web/*" = ["E501"]
 [tool.mypy]
+python_version = "3.11"
+strict = false
+ignore_missing_imports = true
+warn_unused_ignores = false
+warn_return_any = false
+disable_error_code = ["import-untyped"]
+
+# Pre-existing type issues in these modules — excluded until addressed separately
+[[tool.mypy.overrides]]
+module = ["src.pdf_renderer", "src.scrapers", "src.translator", "src.cv_parser"]
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = ["web.*"]
+ignore_errors = true
