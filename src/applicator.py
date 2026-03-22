@@ -6,7 +6,6 @@ import asyncio
 import os
 from datetime import datetime
 from pathlib import Path
-from typing import Any
 
 import yaml
 from rich.console import Console
@@ -33,7 +32,7 @@ def _load_profile() -> dict:
     profile_path = Path("config/profile.yaml")
     if not profile_path.exists():
         return {}
-    with open(profile_path, "r", encoding="utf-8") as f:
+    with open(profile_path, encoding="utf-8") as f:
         return yaml.safe_load(f) or {}
 
 
@@ -190,8 +189,8 @@ async def _fill_application_async(
                     upload_selectors.extend([
                         f'input[type="file"][name*="{field_name}"]',
                         f'input[type="file"][id*="{field_name}"]',
-                        f'input[type="file"][accept*=".docx"]',
-                        f'input[type="file"][accept*=".pdf"]',
+                        'input[type="file"][accept*=".docx"]',
+                        'input[type="file"][accept*=".pdf"]',
                         'input[type="file"]',
                     ])
 
@@ -311,7 +310,7 @@ def run_application(
             )
         finally:
             conn.close()
-        console.print(f"[bold green]Application submitted![/bold green] Status updated to 'applied'.")
+        console.print("[bold green]Application submitted![/bold green] Status updated to 'applied'.")
     else:
         console.print(
             "[yellow]Dry run complete.[/yellow] No form was submitted. "

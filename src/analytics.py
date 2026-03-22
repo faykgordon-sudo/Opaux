@@ -6,7 +6,7 @@ import json
 import logging
 import sqlite3
 from collections import Counter, defaultdict
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 log = logging.getLogger(__name__)
 
@@ -107,7 +107,7 @@ def compute_keyword_analytics(db_path: str) -> dict:
         }
 
         # ── Monthly applications (last 6 months) ─────────────────────────
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         months = []
         for offset in range(5, -1, -1):
             # Walk back 'offset' months from current month

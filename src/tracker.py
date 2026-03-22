@@ -5,7 +5,6 @@ tracker.py -- Application tracking dashboard with rich terminal UI.
 import csv
 import os
 from datetime import datetime
-from typing import Any
 
 from rich.console import Console
 from rich.table import Table
@@ -119,7 +118,7 @@ def run_tracker(
         return
 
     # --- Main Table ---
-    title = f"[bold]Job Application Tracker[/bold]"
+    title = "[bold]Job Application Tracker[/bold]"
     if status:
         title += f" -- [yellow]{status}[/yellow]"
 

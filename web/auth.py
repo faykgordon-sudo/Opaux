@@ -5,10 +5,10 @@ web/auth.py -- User model, auth DB, and all auth routes.
 import secrets
 import sqlite3
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
-from flask import Blueprint, current_app, redirect, render_template, request, url_for, flash
+from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
 from flask_login import UserMixin, current_user, login_required, login_user, logout_user
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -189,7 +189,7 @@ class User(UserMixin):
     @staticmethod
     def increment_api_calls(user_id: str) -> int:
         """Increment API call counter, reset monthly. Returns new count."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         conn = _conn()
         row = conn.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
         if not row:
@@ -226,7 +226,7 @@ class User(UserMixin):
     @staticmethod
     def create_reset_token(user_id: str) -> str:
         token = secrets.token_urlsafe(32)
-        expires = (datetime.now(timezone.utc) + timedelta(hours=1)).isoformat()
+        expires = (datetime.now(UTC) + timedelta(hours=1)).isoformat()
         conn = _conn()
         # Invalidate old tokens for this user
         conn.execute("UPDATE password_reset_tokens SET used=1 WHERE user_id=?", (user_id,))
@@ -249,7 +249,7 @@ class User(UserMixin):
         if not row:
             return None
         expires = datetime.fromisoformat(row["expires_at"])
-        if datetime.now(timezone.utc) > expires:
+        if datetime.now(UTC) > expires:
             return None
         return User.get(row["user_id"])
 
@@ -293,13 +293,13 @@ def load_user_config(user_id: str) -> dict:
     import yaml
     p = user_settings_path(user_id)
     if p.exists():
-        with open(p, "r", encoding="utf-8") as f:
+        with open(p, encoding="utf-8") as f:
             cfg = yaml.safe_load(f) or {}
     else:
         global_cfg = Path("config/settings.yaml")
         cfg = {}
         if global_cfg.exists():
-            with open(global_cfg, "r", encoding="utf-8") as f:
+            with open(global_cfg, encoding="utf-8") as f:
                 cfg = yaml.safe_load(f) or {}
     cfg["_user_id"] = user_id
     cfg["_profile_path"] = str(user_profile_path(user_id))
@@ -431,6 +431,7 @@ def delete_account():
 def _send_reset_email(email: str, token: str) -> None:
     try:
         from flask_mail import Message
+
         from web.extensions import mail
         reset_url = url_for("auth.reset_password", token=token, _external=True)
         msg = Message(

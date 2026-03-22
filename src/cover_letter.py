@@ -49,7 +49,7 @@ def _load_profile(config: dict | None = None) -> dict:
     profile_path = Path((config or {}).get("_profile_path", "config/profile.yaml"))
     if not profile_path.exists():
         return {}
-    with open(profile_path, "r", encoding="utf-8") as f:
+    with open(profile_path, encoding="utf-8") as f:
         return yaml.safe_load(f) or {}
 
 
@@ -100,7 +100,7 @@ def _save_cover_letter_docx(text: str, output_path: str, profile: dict, lang: st
     """Save the cover letter text as a .docx file."""
     try:
         from docx import Document
-        from docx.shared import Pt, Inches
+        from docx.shared import Inches, Pt
     except ImportError:
         raise ImportError("python-docx is required. Install with: pip install python-docx")
 

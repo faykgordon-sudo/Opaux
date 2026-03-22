@@ -3,7 +3,6 @@ docx_builder.py -- Generate .docx CV files in American, German, or Europass form
 """
 
 import os
-from pathlib import Path
 from typing import Any
 
 from rich.console import Console
@@ -788,7 +787,8 @@ def build_europass(content: dict, format_config: dict) -> Any:
     tailored_bullets = content.get("tailored_bullets", {})
 
     cefr_levels = extras.get("cefr_levels", ["A1", "A2", "B1", "B2", "C1", "C2"])
-    cefr_skills = extras.get("cefr_skills", ["Listening", "Reading", "Spoken interaction", "Spoken production", "Writing"])
+    cefr_skills = extras.get("cefr_skills", [
+        "Listening", "Reading", "Spoken interaction", "Spoken production", "Writing"])
     digcomp_areas = extras.get("digcomp_areas", [
         "Information and data literacy",
         "Communication and collaboration",

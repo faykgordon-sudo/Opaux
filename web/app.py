@@ -8,13 +8,21 @@ import queue
 import sys
 import threading
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import yaml
 from flask import (
-    Flask, Response, abort, flash, jsonify, redirect,
-    render_template, request, send_file, url_for,
+    Flask,
+    Response,
+    abort,
+    flash,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    send_file,
+    url_for,
 )
 from flask_login import current_user, login_required
 
@@ -285,8 +293,8 @@ def _register_routes(app: Flask):
 
         def run():
             try:
-                from web.auth import load_user_config
                 from src.tailoring import run_tailoring
+                from web.auth import load_user_config
                 cfg = load_user_config(uid)
                 _task_log(task_id, f"Tailoring CV ({fmt} / {lang})...")
                 path = run_tailoring(cfg, cfg["database"]["path"], job_id, format=fmt, lang=lang)
@@ -312,8 +320,8 @@ def _register_routes(app: Flask):
 
         def run():
             try:
-                from web.auth import load_user_config
                 from src.cover_letter import run_cover_letter
+                from web.auth import load_user_config
                 cfg = load_user_config(uid)
                 _task_log(task_id, "Generating cover letter...")
                 path = run_cover_letter(cfg, cfg["database"]["path"], job_id)
@@ -405,9 +413,9 @@ def _register_routes(app: Flask):
             if notes:
                 kwargs["notes"] = notes
             if new_status == "applied":
-                kwargs["applied_date"] = datetime.now(timezone.utc).isoformat()
+                kwargs["applied_date"] = datetime.now(UTC).isoformat()
             elif new_status in ("responded","interview","offer"):
-                kwargs["response_date"] = datetime.now(timezone.utc).isoformat()
+                kwargs["response_date"] = datetime.now(UTC).isoformat()
             update_job(conn, job_id, **kwargs)
 
             # Email notification for responses
@@ -417,8 +425,8 @@ def _register_routes(app: Flask):
 
         if new_status in ("responded","interview","offer") and job:
             try:
-                from web.email_service import send_response_alert
                 from web.auth import User
+                from web.email_service import send_response_alert
                 user = User.get(current_user.id)
                 send_response_alert(user, job, new_status)
             except Exception:
@@ -436,8 +444,8 @@ def _register_routes(app: Flask):
 
         def run():
             try:
-                from web.auth import load_user_config
                 from src.discovery import run_discovery
+                from web.auth import load_user_config
                 cfg = load_user_config(uid)
                 _task_log(task_id, "Discovering jobs...")
                 count = run_discovery(cfg, cfg["database"]["path"])
@@ -463,8 +471,8 @@ def _register_routes(app: Flask):
 
         def run():
             try:
-                from web.auth import load_user_config
                 from src.scoring import run_scoring
+                from web.auth import load_user_config
                 cfg = load_user_config(uid)
                 _task_log(task_id, "Scoring jobs...")
                 scored = run_scoring(cfg, cfg["database"]["path"])
@@ -491,7 +499,12 @@ def _register_routes(app: Flask):
     @app.route("/setup/upload", methods=["POST"])
     @login_required
     def setup_upload():
-        from web.auth import load_user_config, user_profile_path, user_settings_path, user_upload_dir
+        from web.auth import (
+            load_user_config,
+            user_profile_path,
+            user_settings_path,
+            user_upload_dir,
+        )
         task_id = _new_task()
         uid = current_user.id
 
@@ -562,7 +575,7 @@ def _register_routes(app: Flask):
         profile = {}
         p = user_profile_path(current_user.id)
         if p.exists():
-            with open(p, "r", encoding="utf-8") as f:
+            with open(p, encoding="utf-8") as f:
                 profile = yaml.safe_load(f) or {}
         return render_template("settings.html", config=cfg, profile=profile,
                                flashes=get_flashed_messages_safe())

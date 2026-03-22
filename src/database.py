@@ -5,7 +5,6 @@ database.py -- SQLite database initialization and helper functions for Opaux.
 import hashlib
 import os
 import sqlite3
-from datetime import datetime
 from typing import Any
 
 CREATE_JOBS_TABLE = """

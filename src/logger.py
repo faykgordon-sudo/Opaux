@@ -8,7 +8,6 @@ Usage in any module:
 """
 
 import logging
-import os
 from pathlib import Path
 
 from rich.logging import RichHandler

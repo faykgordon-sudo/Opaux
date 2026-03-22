@@ -3,11 +3,11 @@ web/admin.py -- Admin blueprint for Opaux.
 """
 
 import logging
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from functools import wraps
 from pathlib import Path
 
-from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
+from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user
 
 log = logging.getLogger(__name__)
@@ -66,7 +66,7 @@ def admin_index():
                 log.warning("Could not count jobs for user %s: %s", user.id, exc)
 
     # Recent signups (last 7 days)
-    cutoff = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
+    cutoff = (datetime.now(UTC) - timedelta(days=7)).isoformat()
     recent_signups = []
     for user in all_users:
         try:
@@ -79,6 +79,7 @@ def admin_index():
     # Directly query the DB for recent signups since User model doesn't expose created_at
     try:
         import sqlite3
+
         from web.auth import AUTH_DB
         conn = sqlite3.connect(str(AUTH_DB))
         conn.row_factory = sqlite3.Row

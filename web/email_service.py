@@ -21,6 +21,7 @@ def _mail_enabled() -> bool:
 def _send(subject: str, recipients: list[str], html: str) -> None:
     """Low-level send wrapper. Raises on error (caller decides how to handle)."""
     from flask_mail import Message
+
     from web.extensions import mail
 
     msg = Message(

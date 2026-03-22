@@ -11,22 +11,21 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, patch, call
+from unittest.mock import MagicMock, patch
 
 # Ensure src is importable
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src.database import (
     generate_job_id,
+    get_all_jobs,
     get_connection,
     get_job_by_id,
+    get_unscored_jobs,
     init_db,
     insert_job,
     update_job,
-    get_unscored_jobs,
-    get_all_jobs,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -367,6 +366,7 @@ class TestFullPipelineIntegration(unittest.TestCase):
     def test_step2_tailor_job(self, mock_load_profile):
         """Step 2: Tailor the scored job and verify .docx is created."""
         import unittest.mock as _mock
+
         import yaml as _yaml
 
         # Pre-score the job
@@ -445,6 +445,7 @@ class TestFullPipelineIntegration(unittest.TestCase):
     def test_full_pipeline_state_transitions(self, mock_load_profile):
         """Full pipeline: discovered -> scored -> tailored state transitions."""
         import unittest.mock as _mock
+
         import yaml as _yaml
 
         sample_profile_dict = {

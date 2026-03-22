@@ -4,7 +4,6 @@ cv_formats.py -- Load and parse CV format configuration from YAML templates.
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
 
 import yaml
 
@@ -41,7 +40,7 @@ def load_format(format_name: str) -> dict:
             f"Ensure the templates/ directory contains cv_{format_name}.yaml"
         )
 
-    with open(template_path, "r", encoding="utf-8") as f:
+    with open(template_path, encoding="utf-8") as f:
         data = yaml.safe_load(f)
 
     if not isinstance(data, dict):

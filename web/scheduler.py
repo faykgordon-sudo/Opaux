@@ -23,9 +23,9 @@ def nightly_discovery_and_score(app) -> None:
     """
     with app.app_context():
         try:
-            from web.auth import User, load_user_config
             from src.discovery import run_discovery
             from src.scoring import run_scoring
+            from web.auth import User, load_user_config
 
             users = User.all_users()
             active_users = [u for u in users if u._is_active]

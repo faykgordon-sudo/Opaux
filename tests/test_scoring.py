@@ -4,7 +4,6 @@ test_scoring.py -- Tests for scoring.py
 
 import json
 import os
-import sqlite3
 import sys
 import tempfile
 import unittest
@@ -14,9 +13,8 @@ from unittest.mock import MagicMock, patch
 # Ensure src is importable
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from src.database import generate_job_id, get_connection, init_db, insert_job, get_job_by_id
-from src.scoring import _parse_score_response, _load_profile, SCORING_PROMPT
-
+from src.database import generate_job_id, get_connection, get_job_by_id, init_db, insert_job
+from src.scoring import SCORING_PROMPT, _parse_score_response
 
 SAMPLE_PROFILE_YAML = """
 personal:
@@ -262,7 +260,6 @@ class TestGenerateJobId(unittest.TestCase):
 
     def test_hexadecimal_chars_only(self):
         """ID should only contain hexadecimal characters."""
-        import re
         url = "https://linkedin.com/jobs/view/12345678"
         job_id = generate_job_id(url)
         self.assertRegex(job_id, r"^[0-9a-f]{16}$")

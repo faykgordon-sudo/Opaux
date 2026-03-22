@@ -8,7 +8,10 @@ import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
+
 load_dotenv(Path(__file__).parent / ".env")
+
+from datetime import UTC
 
 import rich_click as click
 from rich.console import Console
@@ -131,7 +134,7 @@ def _setup_command() -> None:
     import yaml
 
     if settings_path.exists():
-        with open(settings_path, "r", encoding="utf-8") as f:
+        with open(settings_path, encoding="utf-8") as f:
             config = yaml.safe_load(f) or {}
         console.print("[bold blue]Opaux Setup[/bold blue] -- updating existing settings\n")
     else:
@@ -200,7 +203,7 @@ def _setup_command() -> None:
     with open(settings_path, "w", encoding="utf-8") as f:
         yaml.dump(config, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
 
-    console.print(f"\n[bold green]Setup complete![/bold green]")
+    console.print("\n[bold green]Setup complete![/bold green]")
     console.print(f"  Language : [cyan]{lang}[/cyan] ({SUPPORTED_LANGS.get(lang, lang)})")
     console.print(f"  CV format: [cyan]{cv_format}[/cyan]")
     console.print(f"  Search   : [cyan]{search_term}[/cyan] in [cyan]{location}[/cyan]")
@@ -751,8 +754,8 @@ def pdf(job_id: str, do_cv: bool, do_cover: bool) -> None:
     config = _load_config()
     db_path = config["database"]["path"]
 
+    from src.database import get_all_jobs, get_connection, get_job_by_id, init_db
     from src.pdf_renderer import render_pdf
-    from src.database import get_connection, get_job_by_id, get_all_jobs, init_db
 
     if not do_cv and not do_cover:
         do_cv = True
@@ -835,8 +838,9 @@ def status(job_id: str, new_status: str, notes: str | None) -> None:
     config = _load_config()
     db_path = config["database"]["path"]
 
-    from src.database import get_connection, get_job_by_id, get_all_jobs, init_db, update_job
-    from datetime import datetime, timezone
+    from datetime import datetime
+
+    from src.database import get_all_jobs, get_connection, get_job_by_id, init_db, update_job
 
     init_db(db_path)
     conn = get_connection(db_path)
@@ -865,9 +869,9 @@ def status(job_id: str, new_status: str, notes: str | None) -> None:
         if notes:
             kwargs["notes"] = notes
         if new_status == "applied" and not job.get("applied_date"):
-            kwargs["applied_date"] = datetime.now(timezone.utc).isoformat()
+            kwargs["applied_date"] = datetime.now(UTC).isoformat()
         elif new_status in ("responded", "interview", "offer") and not job.get("response_date"):
-            kwargs["response_date"] = datetime.now(timezone.utc).isoformat()
+            kwargs["response_date"] = datetime.now(UTC).isoformat()
 
         update_job(conn, job_id, **kwargs)
     finally:
@@ -951,7 +955,7 @@ def db_export(fmt: str, output_path: str | None) -> None:
     if not output_path:
         output_path = f"data/export.{'xlsx' if fmt == 'excel' else 'csv'}"
 
-    from src.database import get_connection, get_all_jobs, init_db
+    from src.database import get_all_jobs, get_connection, init_db
     init_db(db_path)
     conn = get_connection(db_path)
     try:
@@ -996,8 +1000,9 @@ def db_stats() -> None:
     config = _load_config()
     db_path = config["database"]["path"]
 
-    from src.database import get_connection, get_all_jobs, init_db
     from rich.table import Table
+
+    from src.database import get_all_jobs, get_connection, init_db
 
     init_db(db_path)
     conn = get_connection(db_path)

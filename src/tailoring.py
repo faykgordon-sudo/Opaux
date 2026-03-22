@@ -147,7 +147,7 @@ def _load_profile(config: dict) -> tuple[str, dict]:
     profile_path = Path(config.get("_profile_path", "config/profile.yaml"))
     if not profile_path.exists():
         return "(Profile not found)", {}
-    with open(profile_path, "r", encoding="utf-8") as f:
+    with open(profile_path, encoding="utf-8") as f:
         raw = f.read()
     parsed = yaml.safe_load(raw) or {}
     return raw, parsed
@@ -314,7 +314,7 @@ def run_tailoring(
                     ats_score = new_score
                     console.print(f"  ATS after refinement: [bold green]{ats_score:.0%}[/bold green]")
                 else:
-                    console.print(f"  [yellow]Refinement did not improve score -- keeping original.[/yellow]")
+                    console.print("  [yellow]Refinement did not improve score -- keeping original.[/yellow]")
             except Exception:
                 pass  # Keep original if refinement fails to parse
 

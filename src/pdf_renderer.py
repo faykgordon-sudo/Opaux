@@ -28,7 +28,7 @@ def render_pdf(docx_path: str) -> str:
     try:
         _render_via_docx2pdf(docx_path, pdf_path)
         return pdf_path
-    except Exception as e1:
+    except Exception:
         pass
 
     # --- Method 2: LibreOffice headless ---

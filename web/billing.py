@@ -5,8 +5,13 @@ web/billing.py -- Stripe billing blueprint for Opaux.
 import logging
 
 from flask import (
-    Blueprint, current_app, flash, redirect, render_template,
-    request, url_for,
+    Blueprint,
+    current_app,
+    flash,
+    redirect,
+    render_template,
+    request,
+    url_for,
 )
 from flask_login import current_user, login_required
 

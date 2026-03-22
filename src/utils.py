@@ -3,7 +3,6 @@ utils.py -- Shared utilities for Opaux.
 """
 
 import re
-from pathlib import Path
 
 
 def sanitize_filename(text: str) -> str:

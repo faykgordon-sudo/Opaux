@@ -4,7 +4,6 @@ cv_parser.py -- Parse an uploaded CV (PDF or DOCX) into a structured profile
 """
 
 import json
-import os
 import time
 from pathlib import Path
 from typing import Any
@@ -221,7 +220,7 @@ def update_settings_from_cv(
     settings_path = Path(settings_path)
     config = {}
     if settings_path.exists():
-        with open(settings_path, "r", encoding="utf-8") as f:
+        with open(settings_path, encoding="utf-8") as f:
             config = yaml.safe_load(f) or {}
 
     suggestions = parsed.get("suggested_search_terms", [])

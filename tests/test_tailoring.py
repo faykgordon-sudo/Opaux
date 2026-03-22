@@ -8,14 +8,12 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, patch, mock_open
 
 # Ensure src is importable
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from src.database import generate_job_id, get_connection, init_db, insert_job, get_job_by_id
-from src.tailoring import _parse_json_response, TAILORING_PROMPT
-
+from src.database import get_connection, get_job_by_id, init_db, insert_job
+from src.tailoring import TAILORING_PROMPT, _parse_json_response
 
 SAMPLE_PROFILE = {
     "personal": {

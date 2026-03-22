@@ -9,7 +9,6 @@ Sources:
 from datetime import datetime
 from typing import Any
 
-import pandas as pd
 from rich.console import Console
 from rich.table import Table
 
@@ -124,7 +123,7 @@ def _scrape_custom_site(
     config: dict,
 ) -> list[dict]:
     """Scrape a site using our custom scrapers module."""
-    from src.scrapers import scrape_arbeitnow, scrape_adzuna, scrape_bundesagentur, scrape_linkedin
+    from src.scrapers import scrape_adzuna, scrape_arbeitnow, scrape_bundesagentur, scrape_linkedin
 
     if site == "linkedin":
         li_cfg = config.get("linkedin", {})

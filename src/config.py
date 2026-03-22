@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from pydantic import BaseModel, EmailStr, ValidationError, field_validator, model_validator
+from pydantic import BaseModel, ValidationError, field_validator
 from rich.console import Console
 
 console = Console(stderr=True)
@@ -168,7 +168,7 @@ def load_and_validate_settings(
         )
         raise SystemExit(1)
 
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         raw: dict = yaml.safe_load(f) or {}
 
     # Apply env-var overrides

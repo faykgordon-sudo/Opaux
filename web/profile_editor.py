@@ -61,7 +61,7 @@ def profile_editor():
     profile = {}
     if profile_path.exists():
         try:
-            with open(profile_path, "r", encoding="utf-8") as f:
+            with open(profile_path, encoding="utf-8") as f:
                 profile = yaml.safe_load(f) or {}
         except Exception as exc:
             log.warning("Could not load profile for user %s: %s", current_user.id, exc)

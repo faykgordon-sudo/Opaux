@@ -7,7 +7,6 @@ import time
 from pathlib import Path
 from typing import Any
 
-import yaml
 from rich.console import Console
 from rich.table import Table
 
@@ -50,7 +49,7 @@ def _load_profile(config: dict) -> str:
     profile_path = Path(config.get("_profile_path", "config/profile.yaml"))
     if not profile_path.exists():
         return "(Profile not found -- using empty profile)"
-    with open(profile_path, "r", encoding="utf-8") as f:
+    with open(profile_path, encoding="utf-8") as f:
         return f.read()
 
 
