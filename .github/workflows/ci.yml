@@ -27,6 +27,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          pip install numpy
+          pip install --no-deps python-jobspy
           pip install -e ".[dev]"
 
       - name: Lint with ruff

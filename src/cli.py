@@ -98,7 +98,7 @@ def _load_config(config_path: str = "config/settings.yaml") -> dict:
 # ---------------------------------------------------------------------------
 
 @click.group()
-@click.version_option(version="0.1.0", prog_name="opaux")
+@click.version_option(version="0.1.3", prog_name="opaux")
 @click.option("--verbose", "-v", is_flag=True, default=False, help="Show debug output.")
 @click.option("--quiet", "-q", is_flag=True, default=False, help="Show errors only.")
 @click.pass_context
