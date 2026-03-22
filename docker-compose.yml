@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   app:
-    build: .
+    image: ghcr.io/faykgordon-sudo/opaux:latest
     environment:
       - SECRET_KEY=${SECRET_KEY:-8025047bec92077eda823e6af879b37e1db756ed9d2326ab2bdb6c1db0e945df}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
@@ -19,7 +19,7 @@ services:
     restart: unless-stopped
 
   nginx:
-    build: ./nginx
+    image: ghcr.io/faykgordon-sudo/opaux-nginx:latest
     volumes:
       - ./data/certbot/www:/var/www/certbot:ro
       - ./data/certbot/conf:/etc/letsencrypt:ro
