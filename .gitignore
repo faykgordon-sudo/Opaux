@@ -1,0 +1,51 @@
+# ── Environment & secrets ──────────────────────────────────────────────────────
+.env
+# .env.example is intentionally NOT ignored (safe to commit)
+
+# Config with API keys — users should supply their own
+config/settings.yaml
+# config/profile.yaml is intentionally NOT ignored (example profile is safe to commit)
+
+# ── Python ─────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ── Virtual environments ───────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+
+# ── Testing ────────────────────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+*.xml
+
+# ── User data & generated files ───────────────────────────────────────────────
+data/
+uploads/
+output/
+*.db
+*.pdf
+
+# ── Node (if any frontend tooling is added) ───────────────────────────────────
+node_modules/
+
+# ── IDE / OS ───────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+config/profile.yaml

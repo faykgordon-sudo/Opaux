@@ -1,0 +1,44 @@
+name: europass
+rules:
+  max_pages: 4
+  font: Arial
+  font_size: 11
+  margins_inches: 0.75
+  include_photo: false
+  include_dob: true
+  include_nationality: true
+  include_signature: false
+  date_format: "MM/YYYY"
+  use_cefr_grid: true
+  use_digcomp_grid: true
+  use_eqf_levels: true
+
+section_order:
+  - contact
+  - personal_data
+  - desired_position
+  - experience
+  - education
+  - skills
+  - languages
+  - digital_competence
+
+headers:
+  contact: "Personal Information"
+  desired_position: "Desired Position / Occupational Field"
+  experience: "Work Experience"
+  education: "Education and Training"
+  skills: "Personal Skills"
+  languages: "Mother Tongue / Other Languages"
+  digital_competence: "Digital Competence"
+
+cefr_levels: [A1, A2, B1, B2, C1, C2]
+cefr_skills: [Listening, Reading, "Spoken interaction", "Spoken production", Writing]
+
+digcomp_areas:
+  - "Information and data literacy"
+  - "Communication and collaboration"
+  - "Digital content creation"
+  - "Safety"
+  - "Problem solving"
+digcomp_levels: [Foundation, Intermediate, Advanced, "Highly Specialised"]

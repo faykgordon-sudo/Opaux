@@ -1,0 +1,49 @@
+# Core AI
+anthropic>=0.40.0
+
+# CLI
+click>=8.1.0
+rich>=13.0.0
+rich-click>=1.7.0
+
+# Config validation
+pydantic>=2.0.0
+
+# Config / env
+pyyaml>=6.0
+python-dotenv>=1.0.0
+
+# HTTP / scraping
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+playwright>=1.40.0
+python-jobspy>=1.1.0
+
+# Document generation
+python-docx>=1.1.0
+docx2pdf>=0.1.8
+pdfplumber>=0.11.0
+
+# Flask web framework and extensions
+flask>=3.0.0
+flask-login>=0.6.0
+flask-wtf>=1.2.0
+flask-limiter>=3.5.0
+flask-mail>=0.10.0
+werkzeug>=3.0.0
+
+# Payments
+stripe>=9.0.0
+
+# Background scheduling
+apscheduler>=3.10.0
+
+# WSGI server
+gunicorn>=22.0.0
+
+# Logging
+python-json-logger>=2.0.7
+
+# Testing
+pytest>=8.0.0
+pytest-asyncio>=0.23.0

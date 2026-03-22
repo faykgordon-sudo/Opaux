@@ -1,0 +1,82 @@
+personal:
+  name: "Gordon Kofi Fay"
+  email: "faykgordon@gmail.com"
+  phone: "+49 162 7632491"
+  location: "Berlin, Germany"
+  linkedin: "linkedin.com/in/gordonfay"
+  github: ""
+  date_of_birth: "1990-02-02"
+  nationality: "Ghanaian"
+  marital_status: "Single"
+
+summary: |
+  Operations-focused supply chain professional with experience in procurement and logistics within high-growth, sustainability-driven startups. Skilled in supplier management, ERP systems (SAP), and workflow optimization, with a strong focus on data-driven decision-making. Passionate about climate-tech, renewables, and advancing supply chain innovation in energy and maritime sectors.
+
+experience:
+  - title: "Procurement & Supply Operations"
+    company: "Formo Foods GmbH"
+    location: "Berlin, Germany"
+    start: "2025-02"
+    end: "2025-07"
+    bullets:
+      - "Supported purchasing processes for technical equipment and project materials in a renewables-focused startup environment"
+      - "Improved supplier responsiveness by 40% through structured communication and delivery tracking"
+      - "Assisted in supplier selection by comparing offers and preparing procurement documentation"
+      - "Monitored and processed order workflows, improving data integrity and operational efficiency"
+      - "Collaborated with engineering teams to align procurement with carbon capture technology requirements"
+      - "Tracked supplier performance and supported reporting for internal stakeholders"
+    skills: [SAP, Procurement, Supplier Management, Data Analysis, Workflow Optimization]
+
+  - title: "Sourcing & Supplier Strategy Support (Contract)"
+    company: "Ucaneo GmbH"
+    location: "Berlin, Germany"
+    start: "2025-10"
+    end: "2025-12"
+    bullets:
+      - "Supported sourcing and procurement for technical equipment in a climate-tech project environment"
+      - "Maintained supplier communication on orders, documentation, and delivery timelines"
+      - "Contributed to supplier selection and cost-quality analysis"
+      - "Improved operational workflows through process optimization initiatives"
+      - "Coordinated with engineering teams on procurement needs for carbon capture systems"
+      - "Maintained supplier records and supported KPI reporting"
+    skills: [Supplier Strategy, Procurement, SAP, Stakeholder Coordination, Process Improvement]
+
+education:
+  - degree: "MSc Project Management"
+    institution: "Arden University"
+    location: "Berlin, Germany"
+    year: "2026"
+    grade: ""
+
+  - degree: "Bachelor of Business Administration in Human Resource Management"
+    institution: "Valley View University"
+    location: "Accra, Ghana"
+    year: "2022"
+    grade: ""
+
+  - degree: "Venture Institute - Cohort 4"
+    institution: "VC Lab"
+    location: "Remote (Palo Alto, CA)"
+    year: ""
+    grade: ""
+
+skills:
+  languages: []
+  frameworks: []
+  databases: []
+  cloud: []
+  tools: [SAP, Microsoft Excel, JIRA, Asana, Notion, Google Analytics, Canva]
+  soft: [Supplier Relationship Management, Cross-Functional Collaboration, Data-Driven Decision Making, Process Improvement, Stakeholder Communication]
+
+certifications:
+  - name: "Google Analytics"
+    issuer: "Google"
+    date: ""
+
+languages:
+  - language: "English"
+    level: "Fluent"
+    cefr: "C1/C2"
+  - language: "German"
+    level: "Beginner to Intermediate"
+    cefr: "A2-B1"

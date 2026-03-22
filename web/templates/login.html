@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-950">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — Opaux</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="h-full flex items-center justify-center text-gray-100">
+
+  <div class="w-full max-w-sm px-4">
+
+    <div class="text-center mb-8">
+      <div class="text-5xl font-black text-indigo-500 mb-2">opaux</div>
+      <p class="text-gray-500 text-sm">Job Application Autopilot</p>
+    </div>
+
+    <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8">
+      <h1 class="text-xl font-bold text-white mb-6">Sign in</h1>
+
+      {% if error %}
+      <div class="bg-red-500/10 border border-red-500/30 text-red-400 rounded-lg px-4 py-3 text-sm mb-5">
+        {{ error }}
+      </div>
+      {% endif %}
+
+      <form method="POST" action="/login" class="space-y-4">
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Email</label>
+          <input type="email" name="email" required autofocus
+                 class="input" placeholder="you@example.com" />
+        </div>
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Password</label>
+          <input type="password" name="password" required
+                 class="input" placeholder="••••••••" />
+        </div>
+        <button type="submit"
+                class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition-colors mt-2">
+          Sign In
+        </button>
+      </form>
+
+      <p class="text-center text-gray-500 text-sm mt-5">
+        No account yet?
+        <a href="/signup" class="text-indigo-400 hover:text-indigo-300 font-medium">Create one &rarr;</a>
+      </p>
+    </div>
+
+  </div>
+
+  <style>
+    .input {
+      width: 100%; background: #0f172a; border: 1px solid #374151;
+      border-radius: 8px; padding: 10px 14px; color: #e2e8f0;
+      font-size: 14px; outline: none;
+    }
+    .input:focus { border-color: #6366f1; }
+  </style>
+</body>
+</html>

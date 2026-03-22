@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+{% block title %}Setup{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto">
+
+  <div class="mb-8 text-center">
+    <div class="text-5xl font-black text-brand-500 mb-3">opaux</div>
+    <h1 class="text-2xl font-bold text-white">Welcome</h1>
+    <p class="text-gray-400 mt-2">Upload your CV and we'll build your profile automatically.<br>
+    We'll also suggest the right job search terms for you.</p>
+  </div>
+
+  {% if profile_exists %}
+  <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 mb-6 text-sm text-yellow-300">
+    A profile already exists. Uploading a new CV will overwrite it.
+    <a href="/" class="underline ml-2 text-yellow-200 hover:text-white">Skip to Dashboard &rarr;</a>
+  </div>
+  {% endif %}
+
+  <div class="card space-y-6">
+
+    <!-- API Key -->
+    <div>
+      <label class="label required">Claude API Key</label>
+      <input type="password" id="apiKey"
+             placeholder="sk-ant-..."
+             {% if has_api_key %}value="(saved)"{% endif %}
+             class="input" />
+      <p class="hint mt-1">Required to parse your CV. Get yours at console.anthropic.com</p>
+    </div>
+
+    <!-- File drop zone -->
+    <div>
+      <label class="label required">Your CV</label>
+      <div id="dropZone"
+           class="border-2 border-dashed border-gray-700 rounded-xl p-10 text-center cursor-pointer
+                  hover:border-brand-500 hover:bg-brand-500/5 transition-all"
+           onclick="document.getElementById('cvFile').click()"
+           ondragover="event.preventDefault(); this.classList.add('border-brand-500','bg-brand-500/5')"
+           ondragleave="this.classList.remove('border-brand-500','bg-brand-500/5')"
+           ondrop="handleDrop(event)">
+        <div class="text-4xl mb-3">📄</div>
+        <div id="dropLabel" class="text-gray-400 text-sm">
+          <span class="text-white font-medium">Click to upload</span> or drag and drop<br>
+          <span class="text-gray-500 text-xs mt-1 block">PDF or DOCX — max 10MB</span>
+        </div>
+        <input type="file" id="cvFile" accept=".pdf,.docx,.doc" class="hidden"
+               onchange="fileSelected(this)" />
+      </div>
+    </div>
+
+    <!-- Upload button -->
+    <button id="uploadBtn" onclick="startUpload()" disabled
+            class="btn-primary w-full py-3 text-base opacity-50 cursor-not-allowed">
+      Parse CV &amp; Create Profile
+    </button>
+
+  </div>
+
+  <!-- What happens next -->
+  <div class="mt-8 grid grid-cols-3 gap-4 text-center text-xs text-gray-500">
+    <div class="space-y-2">
+      <div class="text-2xl">🔍</div>
+      <div class="font-medium text-gray-300">Profile Created</div>
+      <div>Name, experience, skills, education extracted automatically</div>
+    </div>
+    <div class="space-y-2">
+      <div class="text-2xl">🎯</div>
+      <div class="font-medium text-gray-300">Search Terms Set</div>
+      <div>AI suggests the right job titles to search based on your background</div>
+    </div>
+    <div class="space-y-2">
+      <div class="text-2xl">⚡</div>
+      <div class="font-medium text-gray-300">Ready to Apply</div>
+      <div>Discover jobs, tailor your CV, and apply — all in one click</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Progress modal override (no close until done) -->
+<div id="parseModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+  <div class="bg-gray-900 border border-gray-700 rounded-2xl w-full max-w-md p-8 shadow-2xl text-center">
+    <div id="parseSpinner" class="w-12 h-12 border-4 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto mb-5"></div>
+    <h2 id="parseTitle" class="text-lg font-semibold text-white mb-2">Analysing your CV...</h2>
+    <p class="text-gray-400 text-sm mb-5">Claude is reading your experience, skills, and background. This takes about 15-20 seconds.</p>
+    <div id="parseLog" class="bg-gray-950 rounded-lg p-4 text-left font-mono text-xs text-gray-400 h-36 overflow-y-auto space-y-1"></div>
+    <div id="parseDone" class="hidden mt-5">
+      <div class="text-emerald-400 text-4xl mb-3">✓</div>
+      <div id="parseResult" class="text-white font-semibold mb-1"></div>
+      <div id="parseTerms" class="text-gray-400 text-sm mb-5"></div>
+      <a href="/" class="btn-primary px-8 py-3 text-base">Go to Dashboard &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .card { background: #111827; border: 1px solid #1f2937; border-radius: 16px; padding: 28px; }
+  .label { display: block; font-size: 12px; color: #9ca3af; margin-bottom: 6px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; }
+  .label.required::after { content: " *"; color: #f87171; }
+  .input {
+    width: 100%; background: #0f172a; border: 1px solid #374151;
+    border-radius: 10px; padding: 10px 14px; color: #e2e8f0;
+    font-size: 14px; outline: none;
+  }
+  .input:focus { border-color: #6366f1; }
+  .hint { font-size: 11px; color: #4b5563; }
+</style>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  let selectedFile = null;
+
+  function fileSelected(input) {
+    if (input.files && input.files[0]) {
+      selectedFile = input.files[0];
+      document.getElementById('dropLabel').innerHTML =
+        '<span class="text-brand-400 font-medium">' + selectedFile.name + '</span><br>' +
+        '<span class="text-gray-500 text-xs">' + (selectedFile.size / 1024).toFixed(0) + ' KB</span>';
+      enableUpload();
+    }
+  }
+
+  function handleDrop(e) {
+    e.preventDefault();
+    document.getElementById('dropZone').classList.remove('border-brand-500','bg-brand-500/5');
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      const input = document.getElementById('cvFile');
+      input.files = dt.files;
+      fileSelected(input);
+    }
+  }
+
+  function enableUpload() {
+    const btn = document.getElementById('uploadBtn');
+    btn.disabled = false;
+    btn.classList.remove('opacity-50', 'cursor-not-allowed');
+  }
+
+  function startUpload() {
+    const apiKeyInput = document.getElementById('apiKey');
+    const apiKey = apiKeyInput.value.trim();
+
+    if (!selectedFile) {
+      alert('Please select a CV file first.');
+      return;
+    }
+
+    // Show modal
+    document.getElementById('parseModal').classList.remove('hidden');
+    document.getElementById('parseLog').innerHTML = '';
+
+    const formData = new FormData();
+    if (apiKey && apiKey !== '(saved)') formData.append('api_key', apiKey);
+    formData.append('cv_file', selectedFile);
+
+    fetch('/setup/upload', { method: 'POST', body: formData })
+      .then(r => r.json())
+      .then(data => {
+        if (data.error) {
+          appendParseLog('Error: ' + data.error, 'error');
+          return;
+        }
+        streamParseTask(data.task_id);
+      })
+      .catch(e => appendParseLog('Upload failed: ' + e, 'error'));
+  }
+
+  function streamParseTask(taskId) {
+    const es = new EventSource('/stream/' + taskId);
+    es.onmessage = function(e) {
+      const data = JSON.parse(e.data);
+      if (data.done) {
+        es.close();
+        document.getElementById('parseSpinner').classList.add('hidden');
+        document.getElementById('parseDone').classList.remove('hidden');
+
+        if (data.status === 'done') {
+          let result = {};
+          try { result = JSON.parse(data.result); } catch(_) { result = {}; }
+          document.getElementById('parseTitle').textContent = 'Profile created!';
+          document.getElementById('parseResult').textContent =
+            result.name ? 'Welcome, ' + result.name + '!' : 'Profile saved.';
+          if (result.terms && result.terms.length) {
+            document.getElementById('parseTerms').textContent =
+              'Searching for: ' + result.terms.join(', ');
+          }
+        } else {
+          document.getElementById('parseTitle').textContent = 'Something went wrong';
+          appendParseLog(data.result || 'Unknown error', 'error');
+        }
+      } else {
+        appendParseLog(data.ts + ' ' + data.msg, data.level || 'info');
+      }
+    };
+  }
+
+  function appendParseLog(msg, level = 'info') {
+    const el = document.getElementById('parseLog');
+    const line = document.createElement('div');
+    line.style.color = level === 'error' ? '#f87171' : level === 'success' ? '#4ade80' : '#94a3b8';
+    line.textContent = msg;
+    el.appendChild(line);
+    el.scrollTop = el.scrollHeight;
+  }
+</script>
+{% endblock %}

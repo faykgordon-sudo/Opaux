@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Opaux — Job Application Autopilot</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            indigo: {
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .grid-bg {
+      background-color: #030712;
+      background-image:
+        linear-gradient(rgba(99,102,241,0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99,102,241,0.07) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #818cf8 0%, #6366f1 50%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .card-hover {
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-2px);
+      border-color: rgba(99,102,241,0.4);
+    }
+  </style>
+</head>
+<body class="bg-gray-950 text-gray-100 font-sans antialiased">
+
+  <!-- NAV -->
+  <nav class="fixed top-0 inset-x-0 z-50 border-b border-gray-800/60 bg-gray-950/80 backdrop-blur-md">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2">
+        <span class="text-indigo-500 text-2xl font-black tracking-tight">opaux</span>
+        <span class="text-gray-500 text-xs mt-1 hidden sm:inline">autopilot</span>
+      </a>
+      <div class="flex items-center gap-3">
+        <a href="/login"
+           class="text-gray-300 hover:text-white text-sm font-medium px-4 py-2 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors">
+          Login
+        </a>
+        <a href="/signup"
+           class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors shadow-lg shadow-indigo-900/30">
+          Sign Up Free
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="grid-bg pt-32 pb-24 px-6 text-center relative overflow-hidden">
+    <!-- Glow -->
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <div class="w-[600px] h-[400px] bg-indigo-600/10 rounded-full blur-3xl"></div>
+    </div>
+
+    <div class="relative max-w-4xl mx-auto">
+      <div class="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold px-3 py-1.5 rounded-full mb-6">
+        <span class="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-pulse"></span>
+        AI-Powered Job Application Automation
+      </div>
+
+      <h1 class="text-5xl sm:text-6xl md:text-7xl font-black tracking-tight text-white leading-[1.05] mb-6">
+        Apply to <span class="gradient-text">100 jobs</span><br/>while you sleep.
+      </h1>
+
+      <p class="text-gray-400 text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+        Opaux discovers jobs, tailors your CV to 90%+ ATS score, and submits applications — automatically.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/signup"
+           class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-4 rounded-xl text-base transition-colors shadow-xl shadow-indigo-900/40">
+          Get Started Free
+        </a>
+        <a href="#how"
+           class="bg-gray-800/80 hover:bg-gray-700/80 border border-gray-700 text-gray-200 font-semibold px-8 py-4 rounded-xl text-base transition-colors">
+          See How It Works
+        </a>
+      </div>
+
+      <p class="mt-5 text-gray-600 text-sm">No credit card required &middot; Free plan available</p>
+    </div>
+
+    <!-- Hero stats -->
+    <div class="relative max-w-3xl mx-auto mt-16 grid grid-cols-3 gap-px bg-gray-800/50 rounded-2xl overflow-hidden border border-gray-800">
+      <div class="bg-gray-900/80 px-6 py-5">
+        <div class="text-3xl font-black text-white">90%+</div>
+        <div class="text-gray-500 text-sm mt-1">Avg ATS Score</div>
+      </div>
+      <div class="bg-gray-900/80 px-6 py-5">
+        <div class="text-3xl font-black text-white">100x</div>
+        <div class="text-gray-500 text-sm mt-1">More Applications</div>
+      </div>
+      <div class="bg-gray-900/80 px-6 py-5">
+        <div class="text-3xl font-black text-white">~2 min</div>
+        <div class="text-gray-500 text-sm mt-1">Setup Time</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how" class="py-24 px-6 bg-gray-950">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">How it works</h2>
+        <p class="text-gray-400 text-lg">Four steps. Fully automated. You just review the offers.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Step 1 -->
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 card-hover">
+          <div class="w-10 h-10 bg-indigo-500/15 border border-indigo-500/20 rounded-xl flex items-center justify-center mb-4">
+            <span class="text-indigo-400 font-black text-sm">01</span>
+          </div>
+          <div class="text-3xl mb-3">📄</div>
+          <h3 class="font-bold text-white mb-2">Upload your CV</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Paste your existing CV or fill out your profile — Opaux learns your skills and experience instantly.</p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 card-hover">
+          <div class="w-10 h-10 bg-indigo-500/15 border border-indigo-500/20 rounded-xl flex items-center justify-center mb-4">
+            <span class="text-indigo-400 font-black text-sm">02</span>
+          </div>
+          <div class="text-3xl mb-3">🔍</div>
+          <h3 class="font-bold text-white mb-2">Discover matching jobs</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Our AI scans thousands of job boards daily and surfaces the roles that best fit your background.</p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 card-hover">
+          <div class="w-10 h-10 bg-indigo-500/15 border border-indigo-500/20 rounded-xl flex items-center justify-center mb-4">
+            <span class="text-indigo-400 font-black text-sm">03</span>
+          </div>
+          <div class="text-3xl mb-3">✨</div>
+          <h3 class="font-bold text-white mb-2">AI tailors your CV</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">GPT-4 rewrites your CV for each job description, injecting the right keywords to pass ATS filters at 90%+.</p>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 card-hover">
+          <div class="w-10 h-10 bg-indigo-500/15 border border-indigo-500/20 rounded-xl flex items-center justify-center mb-4">
+            <span class="text-indigo-400 font-black text-sm">04</span>
+          </div>
+          <div class="text-3xl mb-3">🚀</div>
+          <h3 class="font-bold text-white mb-2">Apply automatically</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Opaux submits your tailored applications while you sleep — then tracks every response in your dashboard.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="py-24 px-6 bg-gray-900/40">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Everything you need to land the job</h2>
+        <p class="text-gray-400 text-lg">Built for serious job seekers who want results, not busywork.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 card-hover">
+          <div class="text-2xl mb-3">🤖</div>
+          <h3 class="font-bold text-white mb-2">AI Job Discovery</h3>
+          <p class="text-gray-400 text-sm">Continuously scans LinkedIn, Indeed, and niche boards to surface the best matches for your profile.</p>
+        </div>
+
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 card-hover">
+          <div class="text-2xl mb-3">🎯</div>
+          <h3 class="font-bold text-white mb-2">ATS-Optimised CVs</h3>
+          <p class="text-gray-400 text-sm">Per-job CV tailoring with keyword injection to consistently hit 90%+ ATS scores and get past the robots.</p>
+        </div>
+
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 card-hover">
+          <div class="text-2xl mb-3">✉️</div>
+          <h3 class="font-bold text-white mb-2">Instant Cover Letters</h3>
+          <p class="text-gray-400 text-sm">Generate compelling, personalised cover letters in seconds — tailored to each company's tone and role.</p>
+        </div>
+
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 card-hover">
+          <div class="text-2xl mb-3">📥</div>
+          <h3 class="font-bold text-white mb-2">PDF Export</h3>
+          <p class="text-gray-400 text-sm">Download beautifully formatted, ATS-friendly PDF CVs for any job with a single click.</p>
+        </div>
+
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 card-hover">
+          <div class="text-2xl mb-3">📊</div>
+          <h3 class="font-bold text-white mb-2">Application Tracking</h3>
+          <p class="text-gray-400 text-sm">Follow every application from discovery to offer in one unified dashboard with status updates.</p>
+        </div>
+
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 card-hover">
+          <div class="text-2xl mb-3">🔑</div>
+          <h3 class="font-bold text-white mb-2">Keyword Analytics</h3>
+          <p class="text-gray-400 text-sm">See which keywords drive the most responses and fine-tune your profile for maximum callback rates.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING TEASER -->
+  <section class="py-24 px-6 bg-gray-950">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Simple pricing. Start free.</h2>
+        <p class="text-gray-400 text-lg">Upgrade when you're ready. No surprises.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- Free -->
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 flex flex-col">
+          <div class="mb-6">
+            <div class="text-gray-400 text-sm font-semibold uppercase tracking-wider mb-2">Free</div>
+            <div class="flex items-end gap-1 mb-4">
+              <span class="text-4xl font-black text-white">$0</span>
+              <span class="text-gray-500 mb-1.5">/mo</span>
+            </div>
+            <p class="text-gray-400 text-sm">Get started and see if Opaux is right for you.</p>
+          </div>
+          <ul class="space-y-3 flex-1 mb-8">
+            <li class="flex items-center gap-2.5 text-sm text-gray-300">
+              <span class="text-indigo-400">&#10003;</span> 10 job discoveries/month
+            </li>
+            <li class="flex items-center gap-2.5 text-sm text-gray-300">
+              <span class="text-indigo-400">&#10003;</span> 3 CV tailors/month
+            </li>
+            <li class="flex items-center gap-2.5 text-sm text-gray-300">
+              <span class="text-indigo-400">&#10003;</span> Application tracking
+            </li>
+            <li class="flex items-center gap-2.5 text-sm text-gray-500">
+              <span class="text-gray-700">&#10007;</span> Auto-submit
+            </li>
+            <li class="flex items-center gap-2.5 text-sm text-gray-500">
+              <span class="text-gray-700">&#10007;</span> Cover letters
+            </li>
+          </ul>
+          <a href="/signup" class="block text-center bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white font-semibold py-3 rounded-xl transition-colors">
+            Get Started
+          </a>
+        </div>
+
+        <!-- Starter -->
+        <div class="bg-gray-900 border border-indigo-500/40 rounded-2xl p-8 flex flex-col relative shadow-xl shadow-indigo-900/20">
+          <div class="absolute -top-3.5 left-1/2 -translate-x-1/2">
+            <span class="bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Popular</span>
+          </div>
+          <div class="mb-6">
+            <div class="text-indigo-400 text-sm font-semibold uppercase tracking-wider mb-2">Starter</div>
+            <div class="flex items-end gap-1 mb-4">
+              <span class="text-4xl font-black text-white">$19</span>
+              <span class="text-gray-500 mb-1.5">/mo</span>
+            </div>
+            <p class="text-gray-400 text-sm">For active job seekers applying at scale.</p>
+          </div>
+          <ul class="space-y-3 flex-1 mb-8">
+            <li class="flex items-center gap-2.5 text-sm text-gray-300">
+              <span class="text-indigo-400">&#10003;</span> 100 job discoveries/month
+            </li>
+            <li class="flex items-center gap-2.5 text-sm text-gray-300">
+              <span class="text-indigo-400">&#10003;</span> 50 CV tailors/month
+            </li>
+            <li class="flex items-center gap-2.5 text-sm text-gray-300">
+              <span class="text-indigo-400">&#10003;</span> Cover letter generation
+            </li>
+            <li class="flex items-center gap-2.5 text-sm text-gray-300">
+              <span class="text-indigo-400">&#10003;</span> Auto-submit (50/mo)
+            </li>
+            <li class="flex items-center gap-2.5 text-sm text-gray-300">
+              <span class="text-indigo-400">&#10003;</span> PDF export
+            </li>
+          </ul>
+          <a href="/signup" class="block text-center bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition-colors shadow-lg shadow-indigo-900/40">
+            Start Free Trial
+          </a>
+        </div>
+
+        <!-- Pro -->
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 flex flex-col">
+          <div class="mb-6">
+            <div class="text-gray-400 text-sm font-semibold uppercase tracking-wider mb-2">Pro</div>
+            <div class="flex items-end gap-1 mb-4">
+              <span class="text-4xl font-black text-white">$49</span>
+              <span class="text-gray-500 mb-1.5">/mo</span>
+            </div>
+            <p class="text-gray-400 text-sm">Unlimited automation for power users.</p>
+          </div>
+          <ul class="space-y-3 flex-1 mb-8">
+            <li class="flex items-center gap-2.5 text-sm text-gray-300">
+              <span class="text-indigo-400">&#10003;</span> Unlimited job discoveries
+            </li>
+            <li class="flex items-center gap-2.5 text-sm text-gray-300">
+              <span class="text-indigo-400">&#10003;</span> Unlimited CV tailoring
+            </li>
+            <li class="flex items-center gap-2.5 text-sm text-gray-300">
+              <span class="text-indigo-400">&#10003;</span> Unlimited auto-submit
+            </li>
+            <li class="flex items-center gap-2.5 text-sm text-gray-300">
+              <span class="text-indigo-400">&#10003;</span> Priority AI processing
+            </li>
+            <li class="flex items-center gap-2.5 text-sm text-gray-300">
+              <span class="text-indigo-400">&#10003;</span> Advanced keyword analytics
+            </li>
+          </ul>
+          <a href="/pricing" class="block text-center bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white font-semibold py-3 rounded-xl transition-colors">
+            See Full Details
+          </a>
+        </div>
+
+      </div>
+
+      <p class="text-center text-gray-600 text-sm mt-8">
+        All plans include a 7-day free trial.
+        <a href="/pricing" class="text-indigo-400 hover:text-indigo-300 ml-1">Compare all features &rarr;</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-gray-800/60 bg-gray-950 py-10 px-6">
+    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="text-indigo-500 font-black text-lg tracking-tight">opaux</span>
+        <span class="text-gray-700 text-sm">&copy; Opaux 2025</span>
+      </div>
+      <nav class="flex items-center gap-6 text-sm text-gray-500">
+        <a href="/login" class="hover:text-gray-300 transition-colors">Login</a>
+        <a href="/signup" class="hover:text-gray-300 transition-colors">Sign Up</a>
+        <a href="/pricing" class="hover:text-gray-300 transition-colors">Pricing</a>
+      </nav>
+    </div>
+  </footer>
+
+</body>
+</html>

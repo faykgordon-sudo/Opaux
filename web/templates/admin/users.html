@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}Users — Admin{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+
+  <div class="mb-8 flex items-center justify-between">
+    <div>
+      <div class="flex items-center gap-2 mb-1">
+        <a href="/admin" class="text-gray-500 hover:text-gray-300 text-sm transition-colors">Admin</a>
+        <span class="text-gray-700">/</span>
+        <span class="text-gray-300 text-sm font-medium">Users</span>
+      </div>
+      <h1 class="text-3xl font-bold text-white">User Management</h1>
+      <p class="text-gray-400 mt-1">{{ users | length }} total user{{ 's' if users | length != 1 }}</p>
+    </div>
+  </div>
+
+  <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-gray-500 text-xs uppercase tracking-wider border-b border-gray-800">
+            <th class="px-5 py-3 text-left">Email</th>
+            <th class="px-5 py-3 text-left">Plan</th>
+            <th class="px-5 py-3 text-center">API Calls (month)</th>
+            <th class="px-5 py-3 text-left">Created</th>
+            <th class="px-5 py-3 text-center">Active</th>
+            <th class="px-5 py-3 text-left">Change Plan</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-800/60">
+          {% if not users %}
+          <tr>
+            <td colspan="6" class="px-5 py-12 text-center text-gray-600">No users found.</td>
+          </tr>
+          {% endif %}
+          {% for user in users %}
+          <tr class="hover:bg-gray-800/30 transition-colors">
+            <!-- Email -->
+            <td class="px-5 py-3">
+              <span class="text-gray-200 font-medium">{{ user.email }}</span>
+            </td>
+
+            <!-- Plan badge -->
+            <td class="px-5 py-3">
+              {% set plan = user.plan or 'free' %}
+              <span class="px-2 py-0.5 rounded-full text-xs font-semibold
+                {% if plan == 'pro' %}bg-indigo-500/20 text-indigo-300 border border-indigo-500/30
+                {% elif plan == 'starter' %}bg-sky-500/20 text-sky-300 border border-sky-500/30
+                {% else %}bg-gray-700/60 text-gray-400 border border-gray-600/30{% endif %}">
+                {{ plan }}
+              </span>
+            </td>
+
+            <!-- API calls -->
+            <td class="px-5 py-3 text-center">
+              <span class="font-mono text-gray-400">{{ user.calls_used | default(0) }}</span>
+              {% if user.calls_limit is defined and user.calls_limit != -1 %}
+              <span class="text-gray-700 text-xs"> / {{ user.calls_limit }}</span>
+              {% else %}
+              <span class="text-gray-700 text-xs"> / &infin;</span>
+              {% endif %}
+            </td>
+
+            <!-- Created at -->
+            <td class="px-5 py-3 text-gray-500 text-xs font-mono whitespace-nowrap">
+              {{ user.created_at.strftime('%Y-%m-%d') if user.created_at else '—' }}
+            </td>
+
+            <!-- Active -->
+            <td class="px-5 py-3 text-center">
+              {% if user.is_active %}
+              <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/20">
+                Active
+              </span>
+              {% else %}
+              <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-red-500/15 text-red-300 border border-red-500/20">
+                Deactivated
+              </span>
+              {% endif %}
+            </td>
+
+            <!-- Inline plan change -->
+            <td class="px-5 py-3">
+              <form method="POST" action="/admin/users/{{ user.id }}/plan" class="flex items-center gap-2">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <select name="plan"
+                        class="bg-gray-950 border border-gray-700 text-gray-300 text-xs rounded-lg px-2 py-1.5 outline-none focus:border-brand-500 transition-colors">
+                  {% for opt in ['free', 'starter', 'pro'] %}
+                  <option value="{{ opt }}" {% if (user.plan or 'free') == opt %}selected{% endif %}>{{ opt | title }}</option>
+                  {% endfor %}
+                </select>
+                <button type="submit"
+                        class="text-xs bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-400 hover:text-white
+                               font-medium px-2.5 py-1.5 rounded-lg transition-colors whitespace-nowrap">
+                  Save
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

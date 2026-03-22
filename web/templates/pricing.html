@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-gray-950">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pricing — Opaux</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: { brand: { 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' } } } }
+    }
+  </script>
+</head>
+<body class="bg-gray-950 text-gray-100 font-sans">
+
+  <!-- Nav -->
+  <nav class="border-b border-gray-800 px-6 py-4">
+    <div class="max-w-5xl mx-auto flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2">
+        <span class="text-brand-500 text-2xl font-black tracking-tight">opaux</span>
+        <span class="text-gray-500 text-xs">autopilot</span>
+      </a>
+      <div class="flex items-center gap-4">
+        <a href="/login" class="text-gray-400 hover:text-white text-sm transition-colors">Sign In</a>
+        <a href="/signup" class="bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
+          Get Started Free
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-5xl mx-auto px-6 py-16">
+
+    <!-- Header -->
+    <div class="text-center mb-14">
+      <h1 class="text-4xl font-black text-white mb-4">Simple, transparent pricing</h1>
+      <p class="text-gray-400 text-lg max-w-xl mx-auto">
+        Start free and scale as your job search grows. No hidden fees.
+      </p>
+    </div>
+
+    <!-- Pricing cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
+
+      <!-- Free -->
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-7 flex flex-col">
+        <div class="mb-6">
+          <h2 class="text-lg font-bold text-white mb-1">Free</h2>
+          <div class="flex items-end gap-1 mb-3">
+            <span class="text-4xl font-black text-white">$0</span>
+            <span class="text-gray-500 text-sm mb-1">/month</span>
+          </div>
+          <p class="text-gray-500 text-sm">Perfect for getting started and exploring the platform.</p>
+        </div>
+
+        <ul class="space-y-3 flex-1 mb-8">
+          <li class="flex items-center gap-2.5 text-sm text-gray-300">
+            <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+            </svg>
+            20 AI calls per month
+          </li>
+          <li class="flex items-center gap-2.5 text-sm text-gray-300">
+            <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+            </svg>
+            Manual job apply
+          </li>
+          <li class="flex items-center gap-2.5 text-sm text-gray-300">
+            <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+            </svg>
+            Basic application tracking
+          </li>
+          <li class="flex items-center gap-2.5 text-sm text-gray-400">
+            <svg class="w-4 h-4 text-gray-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+            <span class="line-through opacity-50">Email notifications</span>
+          </li>
+          <li class="flex items-center gap-2.5 text-sm text-gray-400">
+            <svg class="w-4 h-4 text-gray-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+            <span class="line-through opacity-50">Auto-apply</span>
+          </li>
+        </ul>
+
+        <a href="/signup"
+           class="block text-center bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white font-semibold
+                  py-2.5 px-4 rounded-xl transition-colors text-sm">
+          Get Started Free
+        </a>
+      </div>
+
+      <!-- Starter -->
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-7 flex flex-col">
+        <div class="mb-6">
+          <h2 class="text-lg font-bold text-white mb-1">Starter</h2>
+          <div class="flex items-end gap-1 mb-3">
+            <span class="text-4xl font-black text-white">$19</span>
+            <span class="text-gray-500 text-sm mb-1">/month</span>
+          </div>
+          <p class="text-gray-500 text-sm">For active job seekers who want more power.</p>
+        </div>
+
+        <ul class="space-y-3 flex-1 mb-8">
+          <li class="flex items-center gap-2.5 text-sm text-gray-300">
+            <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+            </svg>
+            200 AI calls per month
+          </li>
+          <li class="flex items-center gap-2.5 text-sm text-gray-300">
+            <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+            </svg>
+            Email notifications
+          </li>
+          <li class="flex items-center gap-2.5 text-sm text-gray-300">
+            <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+            </svg>
+            PDF export
+          </li>
+          <li class="flex items-center gap-2.5 text-sm text-gray-300">
+            <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+            </svg>
+            Full application tracking
+          </li>
+          <li class="flex items-center gap-2.5 text-sm text-gray-400">
+            <svg class="w-4 h-4 text-gray-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+            <span class="line-through opacity-50">Overnight auto-apply</span>
+          </li>
+        </ul>
+
+        <form method="POST" action="/billing/create-checkout-session">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="plan" value="starter">
+          <button type="submit"
+                  class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-2.5 px-4 rounded-xl
+                         transition-colors text-sm">
+            Start Starter
+          </button>
+        </form>
+      </div>
+
+      <!-- Pro -->
+      <div class="bg-gray-900 border-2 border-brand-500 rounded-2xl p-7 flex flex-col relative">
+        <!-- Badge -->
+        <div class="absolute -top-3.5 left-1/2 -translate-x-1/2">
+          <span class="bg-brand-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+            Most Popular
+          </span>
+        </div>
+
+        <div class="mb-6">
+          <h2 class="text-lg font-bold text-white mb-1">Pro</h2>
+          <div class="flex items-end gap-1 mb-3">
+            <span class="text-4xl font-black text-white">$49</span>
+            <span class="text-gray-500 text-sm mb-1">/month</span>
+          </div>
+          <p class="text-gray-500 text-sm">For serious job seekers who want full automation.</p>
+        </div>
+
+        <ul class="space-y-3 flex-1 mb-8">
+          <li class="flex items-center gap-2.5 text-sm text-gray-300">
+            <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+            </svg>
+            <strong class="text-white">Unlimited</strong>&nbsp;AI calls
+          </li>
+          <li class="flex items-center gap-2.5 text-sm text-gray-300">
+            <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+            </svg>
+            Overnight auto-apply
+          </li>
+          <li class="flex items-center gap-2.5 text-sm text-gray-300">
+            <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+            </svg>
+            Keyword analytics
+          </li>
+          <li class="flex items-center gap-2.5 text-sm text-gray-300">
+            <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+            </svg>
+            Priority support
+          </li>
+          <li class="flex items-center gap-2.5 text-sm text-gray-300">
+            <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+            </svg>
+            Everything in Starter
+          </li>
+        </ul>
+
+        <form method="POST" action="/billing/create-checkout-session">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="plan" value="pro">
+          <button type="submit"
+                  class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-2.5 px-4 rounded-xl
+                         transition-colors text-sm shadow-lg shadow-brand-600/30">
+            Go Pro
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="max-w-2xl mx-auto">
+      <h2 class="text-2xl font-bold text-white text-center mb-8">Frequently Asked Questions</h2>
+      <div class="space-y-4" id="faqList">
+
+        <details class="bg-gray-900 border border-gray-800 rounded-xl px-6 py-4 group">
+          <summary class="flex items-center justify-between cursor-pointer text-white font-medium text-sm select-none list-none">
+            What counts as an "AI call"?
+            <svg class="w-4 h-4 text-gray-500 group-open:rotate-180 transition-transform shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <p class="text-gray-400 text-sm mt-3 leading-relaxed">
+            Each time Opaux uses AI to score a job, tailor your CV, or write a cover letter counts as one AI call. Discovering jobs and basic tracking do not consume AI calls.
+          </p>
+        </details>
+
+        <details class="bg-gray-900 border border-gray-800 rounded-xl px-6 py-4 group">
+          <summary class="flex items-center justify-between cursor-pointer text-white font-medium text-sm select-none list-none">
+            Can I cancel anytime?
+            <svg class="w-4 h-4 text-gray-500 group-open:rotate-180 transition-transform shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <p class="text-gray-400 text-sm mt-3 leading-relaxed">
+            Yes. Cancel anytime from your billing page with no questions asked. You'll keep access until the end of your billing period.
+          </p>
+        </details>
+
+        <details class="bg-gray-900 border border-gray-800 rounded-xl px-6 py-4 group">
+          <summary class="flex items-center justify-between cursor-pointer text-white font-medium text-sm select-none list-none">
+            How does overnight auto-apply work?
+            <svg class="w-4 h-4 text-gray-500 group-open:rotate-180 transition-transform shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <p class="text-gray-400 text-sm mt-3 leading-relaxed">
+            Pro users can enable automatic mode. Opaux discovers jobs overnight, tailors your CV to each one, and submits applications — all while you sleep. You review everything in your dashboard the next morning.
+          </p>
+        </details>
+
+        <details class="bg-gray-900 border border-gray-800 rounded-xl px-6 py-4 group">
+          <summary class="flex items-center justify-between cursor-pointer text-white font-medium text-sm select-none list-none">
+            Is my data secure?
+            <svg class="w-4 h-4 text-gray-500 group-open:rotate-180 transition-transform shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <p class="text-gray-400 text-sm mt-3 leading-relaxed">
+            Your profile and CV data are stored securely and never shared with third parties. We use industry-standard encryption and Stripe for all payment processing.
+          </p>
+        </details>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-gray-800 py-8 mt-16">
+    <div class="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <span class="text-brand-500 font-black text-lg tracking-tight">opaux</span>
+      <div class="flex gap-6 text-sm text-gray-500">
+        <a href="/login" class="hover:text-white transition-colors">Sign In</a>
+        <a href="/signup" class="hover:text-white transition-colors">Sign Up</a>
+        <a href="/pricing" class="hover:text-white transition-colors">Pricing</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,341 @@
+{% extends "base.html" %}
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-white">Edit Profile</h1>
+    <p class="text-gray-400 mt-1">Keep your profile up to date for better AI tailoring results.</p>
+  </div>
+
+  <form method="POST" action="/profile" id="profileForm" class="space-y-8">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <!-- Personal Info -->
+    <div class="card">
+      <h2 class="section-title">Personal Information</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {% set p = profile.get('personal', {}) if profile else {} %}
+
+        <div class="field">
+          <label class="label">Full Name</label>
+          <input type="text" name="name" value="{{ p.get('name', '') }}" class="input" placeholder="Jane Smith" />
+        </div>
+        <div class="field">
+          <label class="label">Email</label>
+          <input type="email" name="email" value="{{ p.get('email', '') }}" class="input" placeholder="jane@example.com" />
+        </div>
+        <div class="field">
+          <label class="label">Phone</label>
+          <input type="text" name="phone" value="{{ p.get('phone', '') }}" class="input" placeholder="+49 123 456789" />
+        </div>
+        <div class="field">
+          <label class="label">Location</label>
+          <input type="text" name="location" value="{{ p.get('location', '') }}" class="input" placeholder="Berlin, Germany" />
+        </div>
+        <div class="field">
+          <label class="label">LinkedIn URL</label>
+          <input type="url" name="linkedin" value="{{ p.get('linkedin', '') }}" class="input" placeholder="https://linkedin.com/in/..." />
+        </div>
+        <div class="field">
+          <label class="label">GitHub URL</label>
+          <input type="url" name="github" value="{{ p.get('github', '') }}" class="input" placeholder="https://github.com/..." />
+        </div>
+        <div class="field">
+          <label class="label">Date of Birth</label>
+          <input type="date" name="date_of_birth" value="{{ p.get('date_of_birth', '') }}" class="input" />
+        </div>
+        <div class="field">
+          <label class="label">Nationality</label>
+          <input type="text" name="nationality" value="{{ p.get('nationality', '') }}" class="input" placeholder="German" />
+        </div>
+        <div class="field">
+          <label class="label">Marital Status</label>
+          <select name="marital_status" class="input">
+            {% set ms = p.get('marital_status', '') %}
+            <option value="">— select —</option>
+            {% for opt in ['single', 'married', 'divorced', 'widowed', 'prefer not to say'] %}
+            <option value="{{ opt }}" {% if ms == opt %}selected{% endif %}>{{ opt | title }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Professional Summary -->
+    <div class="card">
+      <h2 class="section-title">Professional Summary</h2>
+      {% set summary = profile.get('summary', '') if profile else '' %}
+      <textarea name="summary" rows="5" class="input w-full resize-y" placeholder="A brief summary of your professional background and goals...">{{ summary }}</textarea>
+      <p class="hint mt-1">2–4 sentences. This appears at the top of your CV.</p>
+    </div>
+
+    <!-- Work Experience -->
+    <div class="card">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="section-title mb-0">Work Experience</h2>
+        <button type="button" onclick="addEntry('experience')"
+                class="text-xs bg-brand-600 hover:bg-brand-700 text-white font-semibold px-3 py-1.5 rounded-lg transition-colors">
+          + Add
+        </button>
+      </div>
+      <div id="experience-list" class="space-y-5">
+        {% set experiences = profile.get('experience', []) if profile else [] %}
+        {% if experiences %}
+          {% for exp in experiences %}
+          <div class="entry-block bg-gray-950 border border-gray-800 rounded-xl p-5 relative" data-section="experience">
+            <button type="button" onclick="removeEntry(this)"
+                    class="absolute top-3 right-3 text-gray-700 hover:text-red-400 text-lg leading-none transition-colors">&times;</button>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="field"><label class="label">Job Title</label>
+                <input type="text" name="exp_{{ loop.index0 }}_title" value="{{ exp.get('title', '') }}" class="input" placeholder="Software Engineer" /></div>
+              <div class="field"><label class="label">Company</label>
+                <input type="text" name="exp_{{ loop.index0 }}_company" value="{{ exp.get('company', '') }}" class="input" placeholder="Acme Corp" /></div>
+              <div class="field"><label class="label">Location</label>
+                <input type="text" name="exp_{{ loop.index0 }}_location" value="{{ exp.get('location', '') }}" class="input" placeholder="Berlin, Germany" /></div>
+              <div class="field"><label class="label">Start (YYYY-MM)</label>
+                <input type="text" name="exp_{{ loop.index0 }}_start" value="{{ exp.get('start', '') }}" class="input" placeholder="2020-06" pattern="\d{4}-\d{2}" /></div>
+              <div class="field"><label class="label">End (YYYY-MM or "present")</label>
+                <input type="text" name="exp_{{ loop.index0 }}_end" value="{{ exp.get('end', '') }}" class="input" placeholder="present" /></div>
+            </div>
+            <div class="field mt-3"><label class="label">Bullet Points (one per line)</label>
+              <textarea name="exp_{{ loop.index0 }}_bullets" rows="4" class="input w-full resize-y" placeholder="• Led team of 5 engineers...">{{ exp.get('bullets', '') if exp.get('bullets') is string else '\n'.join(exp.get('bullets', [])) }}</textarea>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-gray-600 text-sm" id="experience-empty">No experience entries yet. Click "+ Add" to get started.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Education -->
+    <div class="card">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="section-title mb-0">Education</h2>
+        <button type="button" onclick="addEntry('education')"
+                class="text-xs bg-brand-600 hover:bg-brand-700 text-white font-semibold px-3 py-1.5 rounded-lg transition-colors">
+          + Add
+        </button>
+      </div>
+      <div id="education-list" class="space-y-5">
+        {% set educations = profile.get('education', []) if profile else [] %}
+        {% if educations %}
+          {% for edu in educations %}
+          <div class="entry-block bg-gray-950 border border-gray-800 rounded-xl p-5 relative" data-section="education">
+            <button type="button" onclick="removeEntry(this)"
+                    class="absolute top-3 right-3 text-gray-700 hover:text-red-400 text-lg leading-none transition-colors">&times;</button>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="field col-span-full"><label class="label">Degree / Qualification</label>
+                <input type="text" name="edu_{{ loop.index0 }}_degree" value="{{ edu.get('degree', '') }}" class="input" placeholder="BSc Computer Science" /></div>
+              <div class="field"><label class="label">Institution</label>
+                <input type="text" name="edu_{{ loop.index0 }}_institution" value="{{ edu.get('institution', '') }}" class="input" placeholder="University of Berlin" /></div>
+              <div class="field"><label class="label">Location</label>
+                <input type="text" name="edu_{{ loop.index0 }}_location" value="{{ edu.get('location', '') }}" class="input" placeholder="Berlin, Germany" /></div>
+              <div class="field"><label class="label">Year</label>
+                <input type="text" name="edu_{{ loop.index0 }}_year" value="{{ edu.get('year', '') }}" class="input" placeholder="2022" /></div>
+              <div class="field"><label class="label">Grade / GPA</label>
+                <input type="text" name="edu_{{ loop.index0 }}_grade" value="{{ edu.get('grade', '') }}" class="input" placeholder="1.5 / First Class" /></div>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-gray-600 text-sm" id="education-empty">No education entries yet.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Skills -->
+    <div class="card">
+      <h2 class="section-title">Skills</h2>
+      {% set skills = profile.get('skills', {}) if profile else {} %}
+      <div class="space-y-4">
+        <div class="field">
+          <label class="label">Tools &amp; Technologies (comma-separated)</label>
+          <textarea name="tools" rows="3" class="input w-full resize-y"
+                    placeholder="Python, Docker, PostgreSQL, AWS, Figma...">{{ skills.get('tools', '') if skills.get('tools') is string else ', '.join(skills.get('tools', [])) }}</textarea>
+        </div>
+        <div class="field">
+          <label class="label">Soft Skills (comma-separated)</label>
+          <textarea name="soft_skills" rows="2" class="input w-full resize-y"
+                    placeholder="Leadership, Communication, Problem Solving...">{{ skills.get('soft', '') if skills.get('soft') is string else ', '.join(skills.get('soft', [])) }}</textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Languages -->
+    <div class="card">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="section-title mb-0">Languages</h2>
+        <button type="button" onclick="addEntry('language')"
+                class="text-xs bg-brand-600 hover:bg-brand-700 text-white font-semibold px-3 py-1.5 rounded-lg transition-colors">
+          + Add
+        </button>
+      </div>
+      <div id="language-list" class="space-y-4">
+        {% set langs = profile.get('languages', []) if profile else [] %}
+        {% if langs %}
+          {% for lang in langs %}
+          <div class="entry-block bg-gray-950 border border-gray-800 rounded-xl p-4 relative" data-section="language">
+            <button type="button" onclick="removeEntry(this)"
+                    class="absolute top-3 right-3 text-gray-700 hover:text-red-400 text-lg leading-none transition-colors">&times;</button>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div class="field"><label class="label">Language</label>
+                <input type="text" name="lang_{{ loop.index0 }}_language" value="{{ lang.get('language', '') }}" class="input" placeholder="German" /></div>
+              <div class="field"><label class="label">Level</label>
+                <select name="lang_{{ loop.index0 }}_level" class="input">
+                  {% set lvl = lang.get('level', '') %}
+                  {% for opt in ['Native', 'Fluent', 'Advanced', 'Intermediate', 'Basic'] %}
+                  <option value="{{ opt }}" {% if lvl == opt %}selected{% endif %}>{{ opt }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="field"><label class="label">CEFR</label>
+                <select name="lang_{{ loop.index0 }}_cefr" class="input">
+                  {% set cefr = lang.get('cefr', '') %}
+                  <option value="">—</option>
+                  {% for opt in ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'Native'] %}
+                  <option value="{{ opt }}" {% if cefr == opt %}selected{% endif %}>{{ opt }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-gray-600 text-sm" id="language-empty">No languages added yet.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <button type="submit" class="btn-primary w-full py-3 text-base">
+      Save Profile
+    </button>
+
+  </form>
+</div>
+
+<style>
+  .card { background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 24px; }
+  .section-title { font-size: 14px; font-weight: 600; color: #e2e8f0; margin-bottom: 16px; }
+  .field { display: flex; flex-direction: column; }
+  .label { font-size: 12px; color: #6b7280; margin-bottom: 4px; font-weight: 500; }
+  .hint { font-size: 11px; color: #4b5563; }
+  .input {
+    background: #0f172a; border: 1px solid #374151; border-radius: 8px;
+    padding: 9px 12px; color: #e2e8f0; font-size: 13px; outline: none; width: 100%;
+  }
+  .input:focus { border-color: #6366f1; }
+</style>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Counters for new entries
+  const counters = {
+    experience: {{ (profile.get('experience', []) | length) if profile else 0 }},
+    education:  {{ (profile.get('education', []) | length) if profile else 0 }},
+    language:   {{ (profile.get('languages', []) | length) if profile else 0 }}
+  };
+
+  function addEntry(section) {
+    const list = document.getElementById(section + '-list');
+    const emptyMsg = document.getElementById(section + '-empty');
+    if (emptyMsg) emptyMsg.remove();
+
+    const idx = counters[section]++;
+    const prefix = section === 'experience' ? 'exp' : section === 'education' ? 'edu' : 'lang';
+
+    let html = '';
+    if (section === 'experience') {
+      html = `
+        <div class="entry-block bg-gray-950 border border-gray-800 rounded-xl p-5 relative" data-section="experience">
+          <button type="button" onclick="removeEntry(this)"
+                  class="absolute top-3 right-3 text-gray-700 hover:text-red-400 text-lg leading-none transition-colors">&times;</button>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="field"><label class="label">Job Title</label>
+              <input type="text" name="${prefix}_${idx}_title" class="input" placeholder="Software Engineer" /></div>
+            <div class="field"><label class="label">Company</label>
+              <input type="text" name="${prefix}_${idx}_company" class="input" placeholder="Acme Corp" /></div>
+            <div class="field"><label class="label">Location</label>
+              <input type="text" name="${prefix}_${idx}_location" class="input" placeholder="Berlin, Germany" /></div>
+            <div class="field"><label class="label">Start (YYYY-MM)</label>
+              <input type="text" name="${prefix}_${idx}_start" class="input" placeholder="2020-06" /></div>
+            <div class="field"><label class="label">End (YYYY-MM or "present")</label>
+              <input type="text" name="${prefix}_${idx}_end" class="input" placeholder="present" /></div>
+          </div>
+          <div class="field mt-3"><label class="label">Bullet Points (one per line)</label>
+            <textarea name="${prefix}_${idx}_bullets" rows="4" class="input w-full resize-y" placeholder="• Led team of 5 engineers..."></textarea>
+          </div>
+        </div>`;
+    } else if (section === 'education') {
+      html = `
+        <div class="entry-block bg-gray-950 border border-gray-800 rounded-xl p-5 relative" data-section="education">
+          <button type="button" onclick="removeEntry(this)"
+                  class="absolute top-3 right-3 text-gray-700 hover:text-red-400 text-lg leading-none transition-colors">&times;</button>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="field col-span-full"><label class="label">Degree / Qualification</label>
+              <input type="text" name="${prefix}_${idx}_degree" class="input" placeholder="BSc Computer Science" /></div>
+            <div class="field"><label class="label">Institution</label>
+              <input type="text" name="${prefix}_${idx}_institution" class="input" placeholder="University of Berlin" /></div>
+            <div class="field"><label class="label">Location</label>
+              <input type="text" name="${prefix}_${idx}_location" class="input" placeholder="Berlin, Germany" /></div>
+            <div class="field"><label class="label">Year</label>
+              <input type="text" name="${prefix}_${idx}_year" class="input" placeholder="2022" /></div>
+            <div class="field"><label class="label">Grade / GPA</label>
+              <input type="text" name="${prefix}_${idx}_grade" class="input" placeholder="1.5 / First Class" /></div>
+          </div>
+        </div>`;
+    } else if (section === 'language') {
+      html = `
+        <div class="entry-block bg-gray-950 border border-gray-800 rounded-xl p-4 relative" data-section="language">
+          <button type="button" onclick="removeEntry(this)"
+                  class="absolute top-3 right-3 text-gray-700 hover:text-red-400 text-lg leading-none transition-colors">&times;</button>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="field"><label class="label">Language</label>
+              <input type="text" name="${prefix}_${idx}_language" class="input" placeholder="German" /></div>
+            <div class="field"><label class="label">Level</label>
+              <select name="${prefix}_${idx}_level" class="input">
+                <option>Native</option><option>Fluent</option><option>Advanced</option>
+                <option>Intermediate</option><option>Basic</option>
+              </select></div>
+            <div class="field"><label class="label">CEFR</label>
+              <select name="${prefix}_${idx}_cefr" class="input">
+                <option value="">—</option>
+                <option>A1</option><option>A2</option><option>B1</option>
+                <option>B2</option><option>C1</option><option>C2</option><option>Native</option>
+              </select></div>
+          </div>
+        </div>`;
+    }
+
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = html.trim();
+    list.appendChild(wrapper.firstChild);
+  }
+
+  function removeEntry(btn) {
+    const block = btn.closest('.entry-block');
+    if (block) block.remove();
+  }
+
+  // On submit: re-number all entries sequentially to ensure no gaps
+  document.getElementById('profileForm').addEventListener('submit', function() {
+    ['experience', 'education', 'language'].forEach(function(section) {
+      const prefix = section === 'experience' ? 'exp' : section === 'education' ? 'edu' : 'lang';
+      const blocks = document.querySelectorAll('[data-section="' + section + '"]');
+      blocks.forEach(function(block, newIdx) {
+        block.querySelectorAll('input, textarea, select').forEach(function(el) {
+          if (el.name) {
+            // Replace old index with new sequential index
+            el.name = el.name.replace(new RegExp('^' + prefix + '_\\d+_'), prefix + '_' + newIdx + '_');
+          }
+        });
+      });
+    });
+  });
+</script>
+{% endblock %}

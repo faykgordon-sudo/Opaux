@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% block title %}Jobs{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+
+  <div class="mb-6 flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-white">Jobs</h1>
+      <p class="text-gray-400 mt-1">{{ jobs | length }} job{{ 's' if jobs | length != 1 }} shown</p>
+    </div>
+  </div>
+
+  <!-- Search + filter row -->
+  <div class="flex flex-col sm:flex-row gap-3 mb-5">
+    <!-- Search input -->
+    <form method="GET" action="/jobs" class="flex-1 flex items-center gap-2">
+      {% if status_filter %}
+      <input type="hidden" name="status" value="{{ status_filter }}" />
+      {% endif %}
+      <div class="relative flex-1">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none"
+             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input type="text" name="q" value="{{ q | default('') }}"
+               placeholder="Search title, company, location..."
+               class="w-full bg-gray-900 border border-gray-700 focus:border-brand-500 outline-none rounded-xl
+                      pl-9 pr-4 py-2.5 text-gray-200 text-sm placeholder-gray-600 transition-colors" />
+      </div>
+      <button type="submit"
+              class="bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 hover:text-white
+                     text-sm font-medium px-4 py-2.5 rounded-xl transition-colors whitespace-nowrap">
+        Search
+      </button>
+      {% if q %}
+      <a href="/jobs{% if status_filter %}?status={{ status_filter }}{% endif %}"
+         class="text-gray-600 hover:text-gray-400 text-sm transition-colors whitespace-nowrap">Clear</a>
+      {% endif %}
+    </form>
+  </div>
+
+  <!-- Status filter tabs -->
+  <div class="flex gap-2 mb-6 flex-wrap">
+    {% set statuses = [('', 'All'), ('scored', 'Scored'), ('tailored', 'Tailored'),
+                       ('applied', 'Applied'), ('responded', 'Responded'),
+                       ('interview', 'Interview'), ('offer', 'Offer')] %}
+    {% for val, label in statuses %}
+    <a href="/jobs{% if val or q %}?{% endif %}{% if val %}status={{ val }}{% endif %}{% if val and q %}&{% endif %}{% if q %}q={{ q }}{% endif %}"
+       class="px-3 py-1.5 rounded-full text-sm font-medium transition-colors
+              {% if status_filter == val or (not val and not status_filter) %}
+                bg-brand-600 text-white
+              {% else %}
+                bg-gray-800 text-gray-400 hover:text-white
+              {% endif %}">
+      {{ label }}
+    </a>
+    {% endfor %}
+  </div>
+
+  <!-- Jobs table -->
+  <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-gray-800 text-gray-500 text-xs uppercase tracking-wider">
+            <th class="px-5 py-3 text-left">Title</th>
+            <th class="px-5 py-3 text-left">Company</th>
+            <th class="px-5 py-3 text-left">Location</th>
+            <th class="px-5 py-3 text-center">Score</th>
+            <th class="px-5 py-3 text-center">ATS</th>
+            <th class="px-5 py-3 text-left">Status</th>
+            <th class="px-5 py-3 text-left">Applied</th>
+            <th class="px-5 py-3"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-800">
+          {% if not jobs %}
+          <tr>
+            <td colspan="8" class="px-5 py-16 text-center">
+              <div class="flex flex-col items-center gap-3">
+                <div class="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center">
+                  <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                  </svg>
+                </div>
+                {% if q or status_filter %}
+                  <p class="text-gray-400 font-medium">No jobs match your filters</p>
+                  <p class="text-gray-600 text-sm">Try clearing the search or changing the status filter.</p>
+                  <a href="/jobs" class="text-brand-500 hover:text-indigo-400 text-sm font-medium transition-colors">Clear filters</a>
+                {% else %}
+                  <p class="text-gray-400 font-medium">No jobs discovered yet</p>
+                  <p class="text-gray-600 text-sm">Run discovery to find jobs matching your profile.</p>
+                  <button onclick="runTask('/discover', 'Discovering jobs...')"
+                          class="btn-primary text-sm px-5 py-2.5 mt-1">
+                    Discover Jobs Now
+                  </button>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% endif %}
+          {% for job in jobs %}
+          <tr class="hover:bg-gray-800/40 transition-colors">
+            <td class="px-5 py-3 max-w-xs">
+              <div class="font-medium text-white truncate max-w-[220px]" title="{{ job.title }}">{{ job.title or '—' }}</div>
+            </td>
+            <td class="px-5 py-3 text-gray-400 whitespace-nowrap">{{ job.company or '—' }}</td>
+            <td class="px-5 py-3 text-gray-500 text-xs max-w-[120px] truncate">{{ job.location or '—' }}</td>
+            <td class="px-5 py-3 text-center">
+              {% if job.score is not none %}
+                {% set s = job.score | float %}
+                <span class="font-mono font-bold text-sm {% if s >= 7 %}text-green-400{% elif s >= 5 %}text-yellow-400{% else %}text-red-400{% endif %}">
+                  {{ '%.1f' | format(s) }}
+                </span>
+              {% else %}<span class="text-gray-700">—</span>{% endif %}
+            </td>
+            <td class="px-5 py-3 text-center font-mono text-xs text-gray-400">
+              {% if job.ats_score is not none %}{{ '%.0f' | format(job.ats_score * 100) }}%{% else %}—{% endif %}
+            </td>
+            <td class="px-5 py-3">
+              <span class="px-2 py-0.5 rounded-full text-xs font-medium status-{{ job.status or 'discovered' }}">
+                {{ job.status or 'discovered' }}
+              </span>
+            </td>
+            <td class="px-5 py-3 text-gray-500 text-xs whitespace-nowrap">
+              {{ job.applied_date[:10] if job.applied_date else '—' }}
+            </td>
+            <td class="px-5 py-3 text-right whitespace-nowrap">
+              <a href="/jobs/{{ job.id }}" class="text-brand-500 hover:text-brand-400 text-xs font-medium">
+                Open &rarr;
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  {% if total_pages is defined and total_pages > 1 %}
+  <div class="mt-6 flex items-center justify-between">
+    <p class="text-gray-500 text-sm">
+      Page {{ page | default(1) }} of {{ total_pages }}
+    </p>
+    <div class="flex items-center gap-2">
+      {% set cur_page = page | default(1) | int %}
+      {% if cur_page > 1 %}
+      <a href="/jobs?page={{ cur_page - 1 }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if q %}&q={{ q }}{% endif %}"
+         class="px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-400 hover:text-white
+                text-sm rounded-lg transition-colors">
+        &larr; Prev
+      </a>
+      {% endif %}
+
+      {% for p in range(1, total_pages + 1) %}
+        {% if p == cur_page %}
+        <span class="px-3 py-2 bg-brand-600 text-white text-sm rounded-lg font-medium">{{ p }}</span>
+        {% elif p <= 2 or p >= total_pages - 1 or (p >= cur_page - 1 and p <= cur_page + 1) %}
+        <a href="/jobs?page={{ p }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if q %}&q={{ q }}{% endif %}"
+           class="px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-400 hover:text-white
+                  text-sm rounded-lg transition-colors">
+          {{ p }}
+        </a>
+        {% elif p == 3 and cur_page > 4 or p == total_pages - 2 and cur_page < total_pages - 3 %}
+        <span class="px-2 text-gray-600">…</span>
+        {% endif %}
+      {% endfor %}
+
+      {% if cur_page < total_pages %}
+      <a href="/jobs?page={{ cur_page + 1 }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if q %}&q={{ q }}{% endif %}"
+         class="px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-400 hover:text-white
+                text-sm rounded-lg transition-colors">
+        Next &rarr;
+      </a>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

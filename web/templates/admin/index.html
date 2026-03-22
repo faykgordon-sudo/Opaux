@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Admin{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+
+  <!-- Header -->
+  <div class="mb-8 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <h1 class="text-3xl font-bold text-white">Admin Dashboard</h1>
+      <span class="bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+        ADMIN
+      </span>
+    </div>
+    <a href="/admin/users"
+       class="bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm px-4 py-2.5 rounded-xl transition-colors">
+      Manage Users
+    </a>
+  </div>
+
+  <!-- Stats row -->
+  <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+
+    <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+      <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Total Users</p>
+      <p class="text-3xl font-black text-white">{{ total_users | default(0) }}</p>
+    </div>
+
+    <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+      <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Free</p>
+      <p class="text-3xl font-black text-gray-400">{{ plan_counts.get('free', 0) if plan_counts else 0 }}</p>
+    </div>
+
+    <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+      <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Starter</p>
+      <p class="text-3xl font-black text-sky-400">{{ plan_counts.get('starter', 0) if plan_counts else 0 }}</p>
+    </div>
+
+    <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+      <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Pro</p>
+      <p class="text-3xl font-black text-indigo-400">{{ plan_counts.get('pro', 0) if plan_counts else 0 }}</p>
+    </div>
+
+    <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+      <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Total Jobs</p>
+      <p class="text-3xl font-black text-blue-400">{{ total_jobs | default(0) }}</p>
+    </div>
+
+  </div>
+
+  <!-- Recent signups -->
+  <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-800 flex items-center justify-between">
+      <div>
+        <h2 class="text-sm font-semibold text-gray-300">Recent Signups (Last 7 Days)</h2>
+        <p class="text-gray-600 text-xs mt-0.5">{{ recent_users | length }} user{{ 's' if recent_users | length != 1 }}</p>
+      </div>
+      <a href="/admin/users" class="text-indigo-400 hover:text-indigo-300 text-sm font-medium transition-colors">
+        View All Users &rarr;
+      </a>
+    </div>
+
+    {% if recent_users %}
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-gray-500 text-xs uppercase tracking-wider border-b border-gray-800">
+            <th class="px-6 py-3 text-left">Email</th>
+            <th class="px-6 py-3 text-left">Plan</th>
+            <th class="px-6 py-3 text-left">Signed Up</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-800/60">
+          {% for user in recent_users %}
+          <tr class="hover:bg-gray-800/30 transition-colors">
+            <td class="px-6 py-3 text-gray-200">{{ user.email }}</td>
+            <td class="px-6 py-3">
+              {% set plan = user.plan or 'free' %}
+              <span class="px-2 py-0.5 rounded-full text-xs font-semibold
+                {% if plan == 'pro' %}bg-indigo-500/20 text-indigo-300 border border-indigo-500/30
+                {% elif plan == 'starter' %}bg-sky-500/20 text-sky-300 border border-sky-500/30
+                {% else %}bg-gray-700/60 text-gray-400 border border-gray-600/30{% endif %}">
+                {{ plan }}
+              </span>
+            </td>
+            <td class="px-6 py-3 text-gray-500 text-xs font-mono">
+              {{ user.created_at.strftime('%Y-%m-%d %H:%M') if user.created_at else '—' }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="px-6 py-12 text-center text-gray-600 text-sm">
+      No new signups in the last 7 days.
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

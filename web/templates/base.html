@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-950">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <title>{% block title %}Opaux{% endblock %} — Job Application Autopilot</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' },
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .status-offer     { @apply bg-emerald-500/20 text-emerald-300 border border-emerald-500/30; }
+    .status-interview { @apply bg-green-500/20 text-green-300 border border-green-500/30; }
+    .status-responded { @apply bg-yellow-500/20 text-yellow-300 border border-yellow-500/30; }
+    .status-applied   { @apply bg-blue-500/20 text-blue-300 border border-blue-500/30; }
+    .status-tailored  { @apply bg-purple-500/20 text-purple-300 border border-purple-500/30; }
+    .status-scored    { @apply bg-gray-500/20 text-gray-300 border border-gray-500/30; }
+    .status-discovered{ @apply bg-gray-700/40 text-gray-400 border border-gray-600/30; }
+    .log-error   { color: #f87171; }
+    .log-success { color: #4ade80; }
+    .log-info    { color: #94a3b8; }
+  </style>
+</head>
+<body class="h-full text-gray-100 font-sans">
+
+  <!-- Mobile overlay -->
+  <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 z-20 hidden lg:hidden" onclick="closeSidebar()"></div>
+
+  <!-- Hamburger button (mobile) -->
+  <button id="hamburgerBtn" onclick="openSidebar()"
+          class="lg:hidden fixed top-4 left-4 z-30 bg-gray-900 border border-gray-700 rounded-lg p-2 text-gray-400 hover:text-white">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+  </button>
+
+  <!-- Sidebar -->
+  <div id="sidebar" class="fixed inset-y-0 left-0 w-60 bg-gray-900 border-r border-gray-800 flex flex-col z-30
+                            -translate-x-full lg:translate-x-0 transition-transform duration-200">
+    <div class="px-6 py-5 border-b border-gray-800">
+      <a href="/" class="flex items-center gap-2">
+        <span class="text-brand-500 text-2xl font-black tracking-tight">opaux</span>
+        <span class="text-gray-500 text-xs mt-1">autopilot</span>
+      </a>
+    </div>
+
+    <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+      <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        Dashboard
+      </a>
+      <a href="/jobs" class="nav-link {% if request.path.startswith('/jobs') %}active{% endif %}">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        Jobs
+      </a>
+      <a href="/analytics" class="nav-link {% if request.path.startswith('/analytics') %}active{% endif %}">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        Analytics
+      </a>
+      <a href="/profile" class="nav-link {% if request.path.startswith('/profile') %}active{% endif %}">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        Profile
+      </a>
+      <a href="/setup" class="nav-link {% if request.path == '/setup' %}active{% endif %}">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+        Setup Profile
+      </a>
+      <a href="/billing" class="nav-link {% if request.path.startswith('/billing') %}active{% endif %}">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+        Billing
+        {% if current_user.is_authenticated and current_user.plan is defined %}
+          {% set plan = current_user.plan or 'free' %}
+          <span class="ml-auto text-xs px-1.5 py-0.5 rounded font-semibold
+            {% if plan == 'pro' %}bg-indigo-500/20 text-indigo-300
+            {% elif plan == 'starter' %}bg-sky-500/20 text-sky-300
+            {% else %}bg-gray-700 text-gray-400{% endif %}">
+            {{ plan }}
+          </span>
+        {% endif %}
+      </a>
+      <a href="/settings" class="nav-link {% if request.path == '/settings' %}active{% endif %}">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
+        Settings
+      </a>
+    </nav>
+
+    <!-- User footer -->
+    <div class="px-4 py-3 border-t border-gray-800">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-gray-400 text-xs truncate">{{ current_user.email if current_user.is_authenticated else '' }}</span>
+        <a href="/logout" class="text-gray-600 hover:text-red-400 text-xs ml-2 whitespace-nowrap">Sign out</a>
+      </div>
+      {% if current_user.is_authenticated %}
+      <div class="flex items-center gap-2 mt-1">
+        {% set plan = current_user.plan if current_user.plan is defined else 'free' %}
+        <span class="text-xs px-1.5 py-0.5 rounded font-semibold
+          {% if plan == 'pro' %}bg-indigo-500/20 text-indigo-300
+          {% elif plan == 'starter' %}bg-sky-500/20 text-sky-300
+          {% else %}bg-gray-700 text-gray-400{% endif %}">
+          {{ plan | upper }}
+        </span>
+        {% if current_user.calls_remaining is defined %}
+        <span class="text-gray-600 text-xs">{{ current_user.calls_remaining }} calls left</span>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Quick actions -->
+    <div class="px-3 py-4 border-t border-gray-800 space-y-2">
+      <button onclick="runTask('/discover', 'Discovering jobs...')"
+              class="w-full btn-primary text-sm py-2">
+        Discover Jobs
+      </button>
+      <button onclick="runTask('/score', 'Scoring jobs...')"
+              class="w-full btn-secondary text-sm py-2">
+        Score All
+      </button>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="lg:ml-60 min-h-screen flex flex-col">
+    <!-- Flash messages rendered as toasts via JS -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <script>
+          window._flashMessages = {{ messages | tojson }};
+        </script>
+      {% endif %}
+    {% endwith %}
+    <main class="flex-1 p-8 pt-16 lg:pt-8">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <!-- Task progress modal -->
+  <div id="taskModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+    <div class="bg-gray-900 border border-gray-700 rounded-xl w-full max-w-lg p-6 shadow-2xl">
+      <div class="flex items-center justify-between mb-4">
+        <h3 id="taskModalTitle" class="font-semibold text-white">Running...</h3>
+        <div id="taskSpinner" class="w-5 h-5 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+      <div id="taskLog" class="bg-gray-950 rounded-lg p-4 h-52 overflow-y-auto font-mono text-xs space-y-1"></div>
+      <div id="taskDoneBar" class="hidden mt-4 flex gap-3">
+        <button onclick="closeTaskModal()" class="btn-primary flex-1">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none" style="min-width:280px;max-width:360px;"></div>
+
+  <style>
+    .nav-link {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 12px; border-radius: 8px;
+      color: #94a3b8; font-size: 14px; font-weight: 500;
+      transition: all 0.15s;
+    }
+    .nav-link:hover { background: #1e293b; color: #e2e8f0; }
+    .nav-link.active { background: #312e81; color: #a5b4fc; }
+    .btn-primary {
+      background: #4f46e5; color: white; font-weight: 600;
+      padding: 8px 16px; border-radius: 8px; border: none;
+      cursor: pointer; transition: background 0.15s; text-align: center;
+      display: inline-block;
+    }
+    .btn-primary:hover { background: #4338ca; }
+    .btn-secondary {
+      background: #1e293b; color: #94a3b8; font-weight: 500;
+      padding: 8px 16px; border-radius: 8px; border: 1px solid #334155;
+      cursor: pointer; transition: all 0.15s; text-align: center;
+      display: inline-block;
+    }
+    .btn-secondary:hover { background: #0f172a; color: #e2e8f0; }
+    .toast {
+      pointer-events: all;
+      animation: slideIn 0.25s ease;
+    }
+    @keyframes slideIn {
+      from { transform: translateX(110%); opacity: 0; }
+      to   { transform: translateX(0);   opacity: 1; }
+    }
+    .toast-out {
+      animation: slideOut 0.25s ease forwards;
+    }
+    @keyframes slideOut {
+      from { transform: translateX(0);   opacity: 1; }
+      to   { transform: translateX(110%); opacity: 0; }
+    }
+  </style>
+
+  <script>
+    // CSRF helper
+    function getCsrfToken() {
+      const meta = document.querySelector('meta[name="csrf-token"]');
+      return meta ? meta.getAttribute('content') : '';
+    }
+
+    // Sidebar mobile
+    function openSidebar() {
+      document.getElementById('sidebar').classList.remove('-translate-x-full');
+      document.getElementById('sidebarOverlay').classList.remove('hidden');
+    }
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.add('-translate-x-full');
+      document.getElementById('sidebarOverlay').classList.add('hidden');
+    }
+
+    // Toast notifications
+    function showToast(msg, type) {
+      type = type || 'info';
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast flex items-start gap-3 px-4 py-3 rounded-xl shadow-2xl border text-sm font-medium '
+        + (type === 'success' ? 'bg-emerald-900/90 border-emerald-700 text-emerald-200'
+          : type === 'error'  ? 'bg-red-900/90 border-red-700 text-red-200'
+          : type === 'warning'? 'bg-yellow-900/90 border-yellow-700 text-yellow-200'
+          :                     'bg-gray-800/95 border-gray-700 text-gray-200');
+
+      const icon = type === 'success' ? '&#10003;'
+                 : type === 'error'   ? '&#10007;'
+                 : type === 'warning' ? '&#9888;'
+                 : 'ℹ';
+
+      toast.innerHTML = '<span class="mt-0.5 shrink-0">' + icon + '</span>'
+        + '<span class="flex-1">' + msg + '</span>'
+        + '<button onclick="dismissToast(this.parentElement)" class="shrink-0 opacity-60 hover:opacity-100 ml-1">&times;</button>';
+
+      container.appendChild(toast);
+      setTimeout(() => dismissToast(toast), 5000);
+    }
+
+    function dismissToast(el) {
+      if (!el || !el.parentElement) return;
+      el.classList.add('toast-out');
+      setTimeout(() => el.remove(), 250);
+    }
+
+    // Render flash messages as toasts
+    if (window._flashMessages) {
+      window._flashMessages.forEach(function(pair) {
+        var cat = pair[0], msg = pair[1];
+        var type = cat === 'success' ? 'success'
+                 : cat === 'danger'  ? 'error'
+                 : cat === 'warning' ? 'warning'
+                 : 'info';
+        showToast(msg, type);
+      });
+    }
+
+    // Task runner
+    let currentEventSource = null;
+
+    function runTask(url, title, body, onDone) {
+      body = body || {};
+      onDone = onDone || null;
+      document.getElementById('taskModalTitle').textContent = title;
+      document.getElementById('taskLog').innerHTML = '';
+      document.getElementById('taskDoneBar').classList.add('hidden');
+      document.getElementById('taskSpinner').classList.remove('hidden');
+      document.getElementById('taskModal').classList.remove('hidden');
+
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-CSRFToken': getCsrfToken()
+        },
+        body: new URLSearchParams(body)
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (!data.task_id) {
+          appendLog('No task ID returned', 'error');
+          return;
+        }
+        streamTask(data.task_id, onDone);
+      })
+      .catch(e => appendLog('Error: ' + e, 'error'));
+    }
+
+    function streamTask(taskId, onDone) {
+      if (currentEventSource) currentEventSource.close();
+      currentEventSource = new EventSource('/stream/' + taskId);
+
+      currentEventSource.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        if (data.done) {
+          currentEventSource.close();
+          document.getElementById('taskSpinner').classList.add('hidden');
+          document.getElementById('taskDoneBar').classList.remove('hidden');
+          if (data.status === 'done') {
+            appendLog('Complete!', 'success');
+            if (onDone) onDone(data.result);
+          } else {
+            appendLog('Failed: ' + (data.result || 'unknown error'), 'error');
+          }
+        } else {
+          appendLog(data.ts + ' ' + data.msg, data.level || 'info');
+        }
+      };
+
+      currentEventSource.onerror = function() {
+        currentEventSource.close();
+        document.getElementById('taskSpinner').classList.add('hidden');
+        document.getElementById('taskDoneBar').classList.remove('hidden');
+      };
+    }
+
+    function appendLog(msg, level) {
+      level = level || 'info';
+      const el = document.getElementById('taskLog');
+      const line = document.createElement('div');
+      line.className = 'log-' + level;
+      line.textContent = msg;
+      el.appendChild(line);
+      el.scrollTop = el.scrollHeight;
+    }
+
+    function closeTaskModal() {
+      document.getElementById('taskModal').classList.add('hidden');
+      if (currentEventSource) currentEventSource.close();
+      window.location.reload();
+    }
+  </script>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

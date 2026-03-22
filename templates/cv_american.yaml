@@ -1,0 +1,29 @@
+name: american
+rules:
+  max_pages: 2
+  font: Arial
+  font_size: 11
+  margins_inches: 0.75
+  include_photo: false
+  include_dob: false
+  include_nationality: false
+  include_marital_status: false
+  include_signature: false
+  max_bullets_per_job: 5
+  date_format: "MMM YYYY"
+
+section_order:
+  - contact
+  - summary
+  - experience
+  - skills
+  - education
+  - certifications
+
+headers:
+  summary: "Professional Summary"
+  experience: "Work Experience"
+  skills: "Skills"
+  education: "Education"
+  certifications: "Certifications"
+  languages: "Languages"

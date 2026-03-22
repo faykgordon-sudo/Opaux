@@ -1,0 +1,34 @@
+name: german
+rules:
+  max_pages: 3
+  font: Arial
+  font_size: 11
+  margins_inches: 1.0
+  include_photo: true
+  include_dob: true
+  include_nationality: true
+  include_marital_status: true
+  include_signature: true
+  date_format: "MM/YYYY"
+  photo_placeholder: "Foto hier einfügen"
+  signature_block: "Ort, Datum                    Unterschrift"
+
+section_order:
+  - contact
+  - personal_data
+  - experience
+  - education
+  - skills
+  - certifications
+  - languages
+  - hobbies
+
+headers:
+  contact: "Persönliche Daten"
+  personal_data: "Persönliche Angaben"
+  experience: "Berufserfahrung"
+  education: "Ausbildung"
+  skills: "Kenntnisse"
+  certifications: "Weiterbildung"
+  languages: "Sprachkenntnisse"
+  hobbies: "Hobbys & Interessen"

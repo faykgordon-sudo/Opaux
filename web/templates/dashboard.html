@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-white">Dashboard</h1>
+    <p class="text-gray-400 mt-1">Your job application command centre</p>
+  </div>
+
+  <!-- Stats row -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <div class="stat-card">
+      <div class="stat-value">{{ stats.total }}</div>
+      <div class="stat-label">Total Tracked</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value text-purple-400">{{ stats.tailored }}</div>
+      <div class="stat-label">CVs Tailored</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value text-blue-400">{{ stats.applied }}</div>
+      <div class="stat-label">Applied</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value text-yellow-400">{{ stats.responded }}</div>
+      <div class="stat-label">Responses
+        {% if stats.response_rate > 0 %}
+          <span class="text-xs text-gray-500 ml-1">{{ stats.response_rate }}%</span>
+        {% endif %}
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value text-green-400">{{ stats.interview }}</div>
+      <div class="stat-label">Interviews
+        {% if stats.interview_rate > 0 %}
+          <span class="text-xs text-gray-500 ml-1">{{ stats.interview_rate }}%</span>
+        {% endif %}
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value text-emerald-400">{{ stats.offer }}</div>
+      <div class="stat-label">Offers</div>
+    </div>
+    <div class="stat-card col-span-2">
+      <div class="text-sm text-gray-400 mb-2 font-medium">Quick Actions</div>
+      <div class="flex gap-2 flex-wrap">
+        <button onclick="runTask('/discover', 'Discovering jobs...', {}, () => window.location.reload())"
+                class="btn-primary text-xs px-3 py-1.5">
+          + Discover
+        </button>
+        <button onclick="runTask('/score', 'Scoring jobs...', {}, () => window.location.reload())"
+                class="btn-secondary text-xs px-3 py-1.5">
+          Score All
+        </button>
+        <a href="/jobs" class="btn-secondary text-xs px-3 py-1.5">View All Jobs</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top jobs table -->
+  <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-800 flex items-center justify-between">
+      <h2 class="font-semibold text-white">Top Scored Jobs</h2>
+      <a href="/jobs" class="text-brand-500 text-sm hover:text-brand-400">View all &rarr;</a>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-gray-800 text-gray-500 text-xs uppercase tracking-wider">
+            <th class="px-6 py-3 text-left">Job</th>
+            <th class="px-6 py-3 text-left">Company</th>
+            <th class="px-6 py-3 text-center">Score</th>
+            <th class="px-6 py-3 text-center">ATS</th>
+            <th class="px-6 py-3 text-left">Status</th>
+            <th class="px-6 py-3"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-800">
+          {% for job in recent_jobs %}
+          <tr class="hover:bg-gray-800/50 transition-colors">
+            <td class="px-6 py-3 font-medium text-white max-w-xs truncate">
+              {{ job.title or '—' }}
+            </td>
+            <td class="px-6 py-3 text-gray-400">{{ job.company or '—' }}</td>
+            <td class="px-6 py-3 text-center">
+              {% if job.score is not none %}
+                {% set s = job.score | float %}
+                <span class="font-mono font-bold {% if s >= 7 %}text-green-400{% elif s >= 5 %}text-yellow-400{% else %}text-red-400{% endif %}">
+                  {{ '%.1f' | format(s) }}
+                </span>
+              {% else %}
+                <span class="text-gray-600">—</span>
+              {% endif %}
+            </td>
+            <td class="px-6 py-3 text-center text-gray-400 font-mono text-xs">
+              {% if job.ats_score is not none %}
+                {{ '%.0f' | format(job.ats_score * 100) }}%
+              {% else %}—{% endif %}
+            </td>
+            <td class="px-6 py-3">
+              <span class="px-2 py-0.5 rounded-full text-xs font-medium status-{{ job.status or 'discovered' }}">
+                {{ job.status or 'discovered' }}
+              </span>
+            </td>
+            <td class="px-6 py-3 text-right">
+              <a href="/jobs/{{ job.id }}" class="text-brand-500 hover:text-brand-400 text-xs font-medium">
+                Open &rarr;
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<style>
+  .stat-card {
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .stat-value { font-size: 2rem; font-weight: 700; color: white; line-height: 1; }
+  .stat-label { font-size: 12px; color: #6b7280; margin-top: 6px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+</style>
+{% endblock %}

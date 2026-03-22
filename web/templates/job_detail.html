@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+{% block title %}{{ job.title }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+
+  <!-- Back -->
+  <a href="/jobs" class="text-gray-500 hover:text-gray-300 text-sm flex items-center gap-1 mb-6">
+    &larr; All Jobs
+  </a>
+
+  <!-- Header -->
+  <div class="flex items-start justify-between mb-6 gap-4">
+    <div class="flex-1">
+      <h1 class="text-2xl font-bold text-white">{{ job.title }}</h1>
+      <div class="flex items-center gap-3 mt-2 flex-wrap">
+        <span class="text-gray-300 font-medium">{{ job.company }}</span>
+        {% if job.location %}
+          <span class="text-gray-500 text-sm">{{ job.location }}</span>
+        {% endif %}
+        <span class="px-2 py-0.5 rounded-full text-xs font-medium status-{{ job.status or 'discovered' }}">
+          {{ job.status or 'discovered' }}
+        </span>
+        {% if job.score is not none %}
+          {% set s = job.score | float %}
+          <span class="font-mono font-bold {% if s >= 7 %}text-green-400{% elif s >= 5 %}text-yellow-400{% else %}text-red-400{% endif %}">
+            Score: {{ '%.1f' | format(s) }}
+          </span>
+        {% endif %}
+        {% if job.ats_score is not none %}
+          <span class="text-gray-400 font-mono text-sm">ATS: {{ '%.0f' | format(job.ats_score * 100) }}%</span>
+        {% endif %}
+      </div>
+    </div>
+    {% if job.url %}
+    <a href="{{ job.url }}" target="_blank"
+       class="btn-secondary text-sm whitespace-nowrap">
+      View Job &rarr;
+    </a>
+    {% endif %}
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- Left: Actions -->
+    <div class="space-y-4">
+
+      <!-- Tailor CV -->
+      <div class="card">
+        <h3 class="card-title">Tailor CV</h3>
+        <div class="space-y-3">
+          <div>
+            <label class="label">Format</label>
+            <select id="tailorFormat" class="select">
+              <option value="german" {% if config.get('application', {}).get('default_format') == 'german' %}selected{% endif %}>German</option>
+              <option value="american" {% if config.get('application', {}).get('default_format') == 'american' %}selected{% endif %}>American</option>
+              <option value="europass">Europass</option>
+            </select>
+          </div>
+          <div>
+            <label class="label">Language</label>
+            <select id="tailorLang" class="select">
+              {% for code, name in supported_langs.items() %}
+              <option value="{{ code }}"
+                {% if config.get('application', {}).get('default_lang') == code %}selected{% endif %}>
+                {{ name }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+          <button onclick="tailorCV()" class="btn-primary w-full">
+            Tailor CV
+          </button>
+        </div>
+        {% if job.cv_path %}
+        <div class="mt-3 pt-3 border-t border-gray-700 flex gap-2">
+          <a href="/jobs/{{ job.id }}/download/cv_docx" class="btn-secondary text-xs flex-1 text-center">
+            .docx
+          </a>
+          <a href="/jobs/{{ job.id }}/download/cv_pdf" class="btn-secondary text-xs flex-1 text-center" id="cvPdfLink">
+            .pdf
+          </a>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Cover Letter -->
+      <div class="card">
+        <h3 class="card-title">Cover Letter</h3>
+        {% if not job.cv_path %}
+          <p class="text-gray-500 text-xs mb-3">Tailor CV first to auto-set language.</p>
+        {% endif %}
+        <button onclick="generateCover()" class="btn-primary w-full">
+          Generate Cover Letter
+        </button>
+        {% if job.cover_letter_path %}
+        <div class="mt-3 pt-3 border-t border-gray-700 flex gap-2">
+          <a href="/jobs/{{ job.id }}/download/cover_docx" class="btn-secondary text-xs flex-1 text-center">
+            .docx
+          </a>
+          <a href="/jobs/{{ job.id }}/download/cover_pdf" class="btn-secondary text-xs flex-1 text-center">
+            .pdf
+          </a>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Render PDFs -->
+      <div class="card">
+        <h3 class="card-title">Render PDFs</h3>
+        <button onclick="renderPDFs()" class="btn-secondary w-full text-sm">
+          Convert to PDF
+        </button>
+      </div>
+
+      <!-- Update Status -->
+      <div class="card">
+        <h3 class="card-title">Update Status</h3>
+        <div class="space-y-2">
+          <select id="statusSelect" class="select">
+            {% for s in ['discovered','scored','tailored','applied','responded','interview','offer'] %}
+            <option value="{{ s }}" {% if job.status == s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+          </select>
+          <input type="text" id="statusNotes" placeholder="Notes (optional)"
+                 class="select" />
+          <button onclick="updateStatus()" class="btn-secondary w-full text-sm">Update</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right: Job details -->
+    <div class="lg:col-span-2 space-y-4">
+
+      <!-- Meta info -->
+      <div class="card grid grid-cols-2 gap-4 text-sm">
+        {% if job.salary_min or job.salary_max %}
+        <div>
+          <div class="text-gray-500 text-xs uppercase tracking-wider mb-1">Salary</div>
+          <div class="text-white">
+            {% if job.salary_min %}{{ job.salary_min | int }}{% endif %}
+            {% if job.salary_min and job.salary_max %} – {% endif %}
+            {% if job.salary_max %}{{ job.salary_max | int }}{% endif %}
+          </div>
+        </div>
+        {% endif %}
+        {% if job.job_type %}
+        <div>
+          <div class="text-gray-500 text-xs uppercase tracking-wider mb-1">Type</div>
+          <div class="text-white">{{ job.job_type }}</div>
+        </div>
+        {% endif %}
+        {% if job.source %}
+        <div>
+          <div class="text-gray-500 text-xs uppercase tracking-wider mb-1">Source</div>
+          <div class="text-gray-300">{{ job.source }}</div>
+        </div>
+        {% endif %}
+        {% if job.date_posted %}
+        <div>
+          <div class="text-gray-500 text-xs uppercase tracking-wider mb-1">Posted</div>
+          <div class="text-gray-300">{{ job.date_posted[:10] }}</div>
+        </div>
+        {% endif %}
+        {% if job.applied_date %}
+        <div>
+          <div class="text-gray-500 text-xs uppercase tracking-wider mb-1">Applied</div>
+          <div class="text-blue-300">{{ job.applied_date[:10] }}</div>
+        </div>
+        {% endif %}
+        {% if job.response_date %}
+        <div>
+          <div class="text-gray-500 text-xs uppercase tracking-wider mb-1">Response</div>
+          <div class="text-green-300">{{ job.response_date[:10] }}</div>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Keywords -->
+      {% if keywords %}
+      <div class="card">
+        <h3 class="card-title mb-3">Matched Keywords</h3>
+        <div class="flex flex-wrap gap-2">
+          {% for kw in keywords %}
+          <span class="px-2 py-0.5 bg-brand-600/20 text-brand-400 border border-brand-600/30 rounded text-xs">{{ kw }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Score reasoning -->
+      {% if job.score_reasoning %}
+      <div class="card">
+        <h3 class="card-title mb-2">Score Reasoning</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">{{ job.score_reasoning }}</p>
+      </div>
+      {% endif %}
+
+      <!-- Notes -->
+      {% if job.notes %}
+      <div class="card">
+        <h3 class="card-title mb-2">Notes</h3>
+        <p class="text-gray-400 text-sm">{{ job.notes }}</p>
+      </div>
+      {% endif %}
+
+      <!-- Description -->
+      {% if job.description %}
+      <div class="card">
+        <h3 class="card-title mb-2">Job Description</h3>
+        <div class="text-gray-400 text-sm leading-relaxed max-h-64 overflow-y-auto whitespace-pre-wrap">{{ job.description[:3000] }}</div>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+<style>
+  .card { background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 20px; }
+  .card-title { font-size: 13px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+  .label { display: block; font-size: 12px; color: #6b7280; margin-bottom: 4px; }
+  .select {
+    width: 100%; background: #0f172a; border: 1px solid #374151;
+    border-radius: 8px; padding: 8px 10px; color: #e2e8f0;
+    font-size: 13px; outline: none;
+  }
+  .select:focus { border-color: #6366f1; }
+</style>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const jobId = "{{ job.id }}";
+
+  function tailorCV() {
+    const fmt = document.getElementById('tailorFormat').value;
+    const lang = document.getElementById('tailorLang').value;
+    runTask('/jobs/' + jobId + '/tailor', 'Tailoring CV...', {format: fmt, lang: lang});
+  }
+
+  function generateCover() {
+    runTask('/jobs/' + jobId + '/cover', 'Generating cover letter...');
+  }
+
+  function renderPDFs() {
+    fetch('/jobs/' + jobId + '/pdf', {method: 'POST'})
+      .then(r => r.json())
+      .then(data => {
+        if (data.cv) alert('CV PDF: ' + data.cv);
+        if (data.cover) alert('Cover PDF: ' + data.cover);
+        if (data.cv_error || data.cover_error) {
+          alert('Error: ' + (data.cv_error || data.cover_error));
+        }
+        window.location.reload();
+      });
+  }
+
+  function updateStatus() {
+    const status = document.getElementById('statusSelect').value;
+    const notes = document.getElementById('statusNotes').value;
+    fetch('/jobs/' + jobId + '/status', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: new URLSearchParams({status, notes})
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.ok) window.location.reload();
+      else alert('Error: ' + data.error);
+    });
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% block title %}Billing{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-white">Billing</h1>
+    <p class="text-gray-400 mt-1">Manage your subscription and usage</p>
+  </div>
+
+  {% if success %}
+  <div class="mb-6 flex items-center gap-3 px-5 py-4 bg-emerald-900/40 border border-emerald-700/50 rounded-xl text-emerald-300 text-sm font-medium">
+    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+    </svg>
+    Subscription activated! Welcome to {{ current_user.plan | title if current_user.plan else 'your new plan' }}.
+  </div>
+  {% endif %}
+
+  <!-- Current plan -->
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-6">
+    <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Current Plan</h2>
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        {% set plan = current_user.plan if current_user.plan is defined and current_user.plan else 'free' %}
+        <span class="text-2xl font-black text-white capitalize">{{ plan }}</span>
+        <span class="px-2.5 py-1 rounded-full text-xs font-bold
+          {% if plan == 'pro' %}bg-indigo-500/20 text-indigo-300 border border-indigo-500/30
+          {% elif plan == 'starter' %}bg-sky-500/20 text-sky-300 border border-sky-500/30
+          {% else %}bg-gray-700/60 text-gray-400 border border-gray-600/30{% endif %}">
+          {{ plan | upper }}
+        </span>
+      </div>
+      {% if plan == 'pro' %}
+        <span class="text-emerald-400 text-sm font-medium">Active</span>
+      {% elif plan == 'starter' %}
+        <span class="text-sky-400 text-sm font-medium">Active</span>
+      {% else %}
+        <span class="text-gray-500 text-sm">Free tier</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Usage -->
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-6">
+    <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">AI Calls This Month</h2>
+    {% set calls_used = current_user.calls_used if current_user.calls_used is defined else 0 %}
+    {% set calls_limit = current_user.calls_limit if current_user.calls_limit is defined else 20 %}
+    {% set pct = [((calls_used / calls_limit) * 100) | int, 100] | min if calls_limit > 0 else 0 %}
+    <div class="flex items-end justify-between mb-2">
+      <span class="text-2xl font-bold text-white">{{ calls_used }}</span>
+      <span class="text-gray-500 text-sm">/ {% if calls_limit == -1 %}Unlimited{% else %}{{ calls_limit }}{% endif %}</span>
+    </div>
+    {% if calls_limit != -1 %}
+    <div class="w-full bg-gray-800 rounded-full h-2.5 overflow-hidden">
+      <div class="h-2.5 rounded-full transition-all
+        {% if pct >= 90 %}bg-red-500{% elif pct >= 70 %}bg-yellow-500{% else %}bg-brand-500{% endif %}"
+        style="width: {{ pct }}%"></div>
+    </div>
+    <p class="text-gray-600 text-xs mt-2">Resets on the 1st of each month</p>
+    {% else %}
+    <p class="text-emerald-400 text-sm font-medium">Unlimited calls on Pro plan</p>
+    {% endif %}
+  </div>
+
+  <!-- Upgrade CTAs -->
+  {% set plan = current_user.plan if current_user.plan is defined and current_user.plan else 'free' %}
+  {% if plan != 'pro' %}
+  <div class="mb-6">
+    <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Upgrade</h2>
+    <div class="grid grid-cols-1 {% if plan == 'free' %}sm:grid-cols-2{% endif %} gap-4">
+
+      {% if plan == 'free' %}
+      <!-- Starter upgrade card -->
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-bold text-white">Starter</h3>
+          <span class="text-sky-400 font-bold">$19/mo</span>
+        </div>
+        <ul class="space-y-2 mb-5 text-sm text-gray-400">
+          <li class="flex items-center gap-2">
+            <span class="text-emerald-400">&#10003;</span> 200 AI calls/month
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="text-emerald-400">&#10003;</span> Email notifications
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="text-emerald-400">&#10003;</span> PDF export
+          </li>
+        </ul>
+        <form method="POST" action="/billing/create-checkout-session">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="plan" value="starter">
+          <button type="submit"
+                  class="w-full bg-sky-700 hover:bg-sky-600 text-white font-semibold py-2.5 rounded-xl text-sm transition-colors">
+            Upgrade to Starter
+          </button>
+        </form>
+      </div>
+      {% endif %}
+
+      <!-- Pro upgrade card -->
+      <div class="bg-gray-900 border-2 border-brand-500 rounded-2xl p-6 relative">
+        <div class="absolute -top-3 left-4">
+          <span class="bg-brand-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full">Most Popular</span>
+        </div>
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-bold text-white">Pro</h3>
+          <span class="text-indigo-400 font-bold">$49/mo</span>
+        </div>
+        <ul class="space-y-2 mb-5 text-sm text-gray-400">
+          <li class="flex items-center gap-2">
+            <span class="text-emerald-400">&#10003;</span> Unlimited AI calls
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="text-emerald-400">&#10003;</span> Overnight auto-apply
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="text-emerald-400">&#10003;</span> Keyword analytics
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="text-emerald-400">&#10003;</span> Priority support
+          </li>
+        </ul>
+        <form method="POST" action="/billing/create-checkout-session">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="plan" value="pro">
+          <button type="submit"
+                  class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-2.5 rounded-xl text-sm transition-colors shadow-lg shadow-brand-600/20">
+            Upgrade to Pro
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Billing portal -->
+  {% if stripe_customer_id %}
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+    <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-1">Manage Subscription</h2>
+    <p class="text-gray-500 text-sm mb-4">
+      Access the billing portal to update payment methods, download invoices, or cancel your subscription.
+    </p>
+    <form method="POST" action="/billing/portal">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit"
+              class="bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 hover:text-white font-medium
+                     py-2.5 px-5 rounded-xl text-sm transition-colors">
+        Open Billing Portal &rarr;
+      </button>
+    </form>
+  </div>
+  {% endif %}
+
+</div>
+
+<style>
+  .card { background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 24px; }
+</style>
+{% endblock %}
