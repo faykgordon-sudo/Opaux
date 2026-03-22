@@ -3,7 +3,16 @@ version: "3.9"
 services:
   app:
     build: .
-    env_file: .env
+    environment:
+      - SECRET_KEY=${SECRET_KEY:-8025047bec92077eda823e6af879b37e1db756ed9d2326ab2bdb6c1db0e945df}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - ADMIN_EMAILS=${ADMIN_EMAILS:-faykgordon@gmail.com}
+      - FLASK_ENV=production
+      - SCHEDULER_ENABLED=0
+      - MAIL_SERVER=smtp.postmarkapp.com
+      - MAIL_PORT=587
+      - MAIL_USE_TLS=1
+      - MAIL_DEFAULT_SENDER=noreply@opaux.com
     volumes:
       - ./data:/app/data
       - ./config:/app/config
